@@ -33,9 +33,6 @@
 				<Label for="password" class="mb-2">Password</Label>
 				<Input bind:value={$signinPassword} type="password" id="password" required />
 			</div>
-			<Checkbox classes={{ div: "mb-6 gap-1 rtl:space-x-reverse" }} required>
-				I agree with the <A href="/" class="text-primary-700 dark:text-primary-600 hover:underline">terms and conditions</A>.
-			</Checkbox>
 			<Button type="submit" onclick={handleSignIn}>Sign In</Button>
 			<div class="mt-3">
 				Don&apos;t have an account?

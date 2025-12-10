@@ -3,7 +3,7 @@
     const session = client.useSession();
     $: to = $session.data ? "/dashboard" : "/sign-in";
 </script>
-
+	
       <div class="flex items-center gap-2 mt-2 mx-auto">
         <a href={to} class="">
           <button>

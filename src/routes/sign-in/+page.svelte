@@ -1,5 +1,5 @@
 <script>
-	import { signIn} from "$lib/auth-client";
+	import { signIn } from "$lib/auth-client";
     import { writable } from "svelte/store";
   	import { Card, Button, Input, Label, Checkbox, A, P } from "flowbite-svelte";
 

@@ -1,4 +1,3 @@
-import { getDb } from "$lib/server/mongodb";
 import { client, auth } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
 

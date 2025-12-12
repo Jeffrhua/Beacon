@@ -1,12 +1,9 @@
-<script>
-
+<script lang="ts">
 </script>
 
-<div>
-    yay you made it!
+<div>	
+	<a href="/profile">Edit Profile</a>
 </div>
 
-
 <style>
-
 </style>

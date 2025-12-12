@@ -24,6 +24,7 @@ export const actions = {
 
         const displayName = form.get('display_name')?.toString().trim();
         const profileDescription = form.get("profile_description")?.toString().trim() ?? "";
+        const phoneNumber = form.get("phone_number")?.toString().trim() ?? "";
 
         const db = client.db('Beacon')
         const res = await db.collection('user').updateOne(
@@ -31,7 +32,8 @@ export const actions = {
             {
                 $set: {
                     displayName: displayName,
-                    profileDescription: profileDescription
+                    profileDescription: profileDescription,
+                    phoneNumber: phoneNumber
                 }
             },
             { upsert: true }

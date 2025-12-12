@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea } from "flowbite-svelte";
+  import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea, PhoneInput } from "flowbite-svelte";
   import { KeyboardSolid, LockSolid, UserSolid, InfoCircleSolid, CloseCircleSolid, CogSolid, EyeSolid } from "flowbite-svelte-icons";
   
   const { data } = $props();
   // Grab user from server, if somehow null just use blank defaults
-  const user = data.user ?? { displayName: "", name: "", profileDescription: "" };
+  const user = data.user ?? { displayName: "", name: "", profileDescription: "", phoneNumber: "" };
 
   let currentSection = $state<"profile" | "accessibility" | "security" | "terms" | "appearance"> ("profile");
 </script>
@@ -63,18 +63,22 @@
       </SidebarItem>
     </SidebarGroup>
   </Sidebar>
-  <div class="h-96 overflow-auto px-4 md:ml-64">
+  <div class="px-4 md:ml-64">
     <div class="rounded-lg border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">
       {#if currentSection === "profile"}
       <form method="POST">
         <div class="mb-6 grid gap-4">
-          <div class="flex flex-col gap-2">
+          <div class="flex flex-col">
             <Label for="display_name" class="mb-2">Display Name</Label>
             <Input type="text" name="display_name" value = {user.displayName ?? user.name} required />
           </div>
-          <div class="flex flex-col gap-2">
+          <div class="flex flex-col">
             <Label for="profile_description" class="mb-2">Profile Description</Label>
             <Textarea name="profile_description" rows={4} value={user.profileDescription} class="w-full"/>
+          </div>
+          <div class="flex flex-col">
+            <Label for="phone_number" class="mb-2">Phone Number</Label>
+            <PhoneInput name="phone_number" defaultValue={user.phoneNumber} placeholder="123-456-7890"/>
           </div>
         </div>
         <Button type="submit">Save Changes</Button>

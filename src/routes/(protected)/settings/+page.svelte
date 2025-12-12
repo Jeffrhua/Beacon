@@ -1,7 +1,11 @@
 <script lang="ts">
-  import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button } from "flowbite-svelte";
+  import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea } from "flowbite-svelte";
   import { KeyboardSolid, LockSolid, UserSolid, InfoCircleSolid, CloseCircleSolid, CogSolid, EyeSolid } from "flowbite-svelte-icons";
   
+  const { data } = $props();
+  // Grab user from server, if somehow null just use blank defaults
+  const user = data.user ?? { displayName: "", name: "", profileDescription: "" };
+
   let currentSection = $state<"profile" | "accessibility" | "security" | "terms" | "appearance"> ("profile");
 </script>
 
@@ -63,13 +67,17 @@
     <div class="rounded-lg border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">
       {#if currentSection === "profile"}
       <form method="POST">
-        <div class="mb-6 grid gap-6 md:grid-rows-2">
-          <div>
-            <Label for="value" class="mb-2">Value</Label>
-            <Input type="text" name="setting_value" required />
+        <div class="mb-6 grid gap-4">
+          <div class="flex flex-col gap-2">
+            <Label for="display_name" class="mb-2">Display Name</Label>
+            <Input type="text" name="display_name" value = {user.displayName ?? user.name} required />
           </div>
-          <Button type="submit">Save Changes</Button>
+          <div class="flex flex-col gap-2">
+            <Label for="profile_description" class="mb-2">Profile Description</Label>
+            <Textarea name="profile_description" rows={4} value={user.profileDescription} class="w-full"/>
+          </div>
         </div>
+        <Button type="submit">Save Changes</Button>
       </form>
       {/if}
     </div>

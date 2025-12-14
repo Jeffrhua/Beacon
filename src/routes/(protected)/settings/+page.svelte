@@ -66,7 +66,7 @@
   <div class="px-4 md:ml-64">
     <div class="rounded-lg border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">
       {#if currentSection === "profile"}
-      <form method="POST">
+      <form method="POST" action="?/updateProfile">
         <div class="mb-6 grid gap-4">
           <div class="flex flex-col">
             <Label for="display_name" class="mb-2">Display Name</Label>
@@ -83,6 +83,13 @@
         </div>
         <Button type="submit">Save Changes</Button>
       </form>
+      {/if}
+      {#if currentSection === "security"}
+        <form method="POST" action="?/deleteAccount">
+          <div class="mb-6 grid gap-4">
+            <Button type="submit">Delete Account</Button>
+          </div>
+        </form>
       {/if}
     </div>
   </div>

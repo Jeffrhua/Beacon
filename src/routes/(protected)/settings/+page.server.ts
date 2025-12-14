@@ -17,7 +17,7 @@ export async function load( {locals} ) {
 }
 
 export const actions = {
-    default: async ({ request, locals }) => {
+    updateProfile: async ({ request, locals }) => {
         const form = await request.formData();
         const user = locals.user;
         const userId = user.id;
@@ -38,6 +38,19 @@ export const actions = {
             },
             { upsert: true }
         )
+        return { success: true, message: 'yayyy!!!' }
+    },
+
+    deleteAccount: async ({ request, locals }) => {
+        const form = await request.formData();
+        const user = locals.user;
+        const userId = user.id;
+
+        const db = client.db('Beacon')
+        
+        await db.collection("user").deleteOne({ _id: new ObjectId(userId) });
+        await db.collection("user_settings").deleteMany({ userId });
+        
         return { success: true, message: 'yayyy!!!' }
     }
 }

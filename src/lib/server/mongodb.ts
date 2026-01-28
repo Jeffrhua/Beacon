@@ -1,6 +1,6 @@
 import { ObjectId, type Db } from 'mongodb';
 import { client } from './auth'
-import type { GroupDb } from '$lib/types';
+import type { GroupDb, UserDb } from '$lib/types';
 
 let db: Db;
 let mainDb: Db;
@@ -14,6 +14,7 @@ export async function getUserSettingDb(){
     return db;
 }
 
+// Get all groups a user is a part of
 export async function getUserGroups(userId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
@@ -35,6 +36,36 @@ export async function getUserGroups(userId: ObjectId){
   ).toArray();
   if (groups.length == 0) return [];
   return groups;
+}
+
+// Get all users in a group
+export async function getGroupUsers(groupId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  if(!db){
+    db = client.db('Beacon');
+  }
+
+  const groupUsers = await mainDb.collection("user_group").find(
+    {
+      "group_id": groupId
+    }
+  ).toArray();
+
+  const userIds : ObjectId[] = groupUsers.map((u) => u.user_id as ObjectId)
+  if (userIds.length == 0) return [];
+  const users = await db.collection<UserDb>("user").find(
+    {
+      _id:{
+        "$in": userIds
+      }
+    }
+  ).toArray();
+
+  if (users.length == 0) return [];
+  return users
 }
 
 export async function getGroup(groupId: ObjectId){

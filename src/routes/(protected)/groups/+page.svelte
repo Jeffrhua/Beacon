@@ -1,10 +1,10 @@
 <script lang="ts">
-	import {page} from "$app/stores";
+	import {page} from "$app/state";
 </script>
 
 <div>	
 	<a href="/groups">Look For Groups</a>
-	<a href="{$page.url.pathname}/my-groups">My Groups</a>
+	<a href="{page.url.pathname}/my-groups">My Groups</a>
 </div>
 
 <style>

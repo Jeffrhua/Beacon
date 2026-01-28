@@ -1,4 +1,21 @@
-import { Db, ObjectId } from "mongodb";
-import { getUserGroupDb } from "$lib/server/mongodb";
+import { ObjectId } from "mongodb";
+import { getUserGroups } from "$lib/server/mongodb";
+import type { Group, GroupDb } from "$lib/types.js";
 
-const db: Db = await  getUserGroupDb(new ObjectId("697932a0a13762fd0a3d6eb1"));
+
+export const load = async ({locals}) => {
+    const user = locals.user;
+    if(!user){
+        return{
+            groupIds: []
+        }
+    }
+    const userId = new ObjectId(user.id);
+    const groups : GroupDb[] = await getUserGroups(userId);
+    const serialized : Group[] = groups.map(({_id, ...r}) =>({
+        id: _id.toString(), // ObjectId is not serializable, so we convert to string
+        ...r
+    }))
+    console.log(serialized)
+    return {groups: serialized}
+}

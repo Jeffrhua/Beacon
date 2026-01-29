@@ -10,7 +10,6 @@ export const load = async ({params}) => {
     }
     const ownerId = group.owner_id
     const owner = await getUser(ownerId);
-    console.log(owner)
     const ownerSerialized = owner
         ? {
             id: owner._id.toString(),

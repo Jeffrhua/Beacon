@@ -12,7 +12,7 @@ export const load = async ({locals}) => {
     }
     const userId = new ObjectId(user.id);
     const groups : GroupDb[] = await getUserGroups(userId);
-    const serialized : Group[] = groups.map(({_id, ...r}) =>({
+    const serialized : Group[] = groups.map(({_id, owner_id, ...r}) =>({
         id: _id.toString(), // ObjectId is not serializable, so we convert to string
         ...r
     }))

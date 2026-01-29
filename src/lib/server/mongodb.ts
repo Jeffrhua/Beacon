@@ -80,3 +80,16 @@ export async function getGroup(groupId: ObjectId){
   );
   return group;
 }
+
+export async function getUser(userId: ObjectId){
+  if(!db){
+    db = client.db('Beacon');
+  }
+  const user = await db.collection("user").findOne(
+    {
+      "_id": userId
+    }
+  );
+  console.log(userId)
+  return user;
+}

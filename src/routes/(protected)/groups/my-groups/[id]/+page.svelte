@@ -1,6 +1,7 @@
 <script lang="ts">
     import {page} from '$app/state';
     import { Card, Listgroup } from "flowbite-svelte";
+    import {UserOutline} from "flowbite-svelte-icons";
 
     let { id } = page.params;
     let { data } = $props();
@@ -38,6 +39,7 @@
             description: "TestDescription5",
             severity: "unknown"
         }]
+    console.log(data.owner)
 </script>
 
 <div class="grid h-screen grid-cols-[75%_1fr] grid-rows-1 gap-2">
@@ -47,20 +49,51 @@
             <h2 class="text-2md">{data.group.description}</h2>
         {/if}
     </div>
-    <div class="flex m-2">
+    <div class="flex flex-col m-2">
+        <Card class="p-4 w-full max-w-none">
+            <div class="flex items-center">
+                <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">Info</h5>
+                <div class="ml-auto flex items-center">
+                    <UserOutline class="h-5 w-5 translate-x-[-5px]"/> 
+                    <p>{data.users.length}</p>
+                </div>
+
+            </div>
+
+            <div>
+                <h6 class="text-md font-semibold text-gray-900 dark:text-white">Owner:</h6>
+                {#if data.owner}
+                    <p>{data.owner.displayName ? data.owner.displayName : data.owner.name}</p>
+                {/if}
+            </div>
+            <div>
+                <h6 class="text-md font-semibold text-gray-900 dark:text-white">Members:</h6>
+                
+                {#if data.users}
+                    <Listgroup items={data.users} class="border-0 dark:bg-transparent">
+                        {#snippet children(user)}
+                            <div class = "flex items-center py-2">
+                                <p class="text-sm font-sm text-gray-900 dark:text-white">{user.displayName ? user.displayName : user.name}</p>
+                            </div>
+                        {/snippet}
+                    </Listgroup>
+                {/if}
+            </div>
+
+        </Card>
         <Card class="p-4 w-full flex-1 max-w-none">
             <div class="mb-4 flex items-center justify-between">
                 <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">Latest Alerts</h5>
             </div>
-            <Listgroup items={alerts} class="border-0 dark:bg-transparent!">
-                {#snippet children(item)}
+            <Listgroup items={alerts} class="border-0 dark:bg-transparent">
+                {#snippet children(alert)}
                 <div class="flex items-center space-x-4 py-2 rtl:space-x-reverse">
                     <div class="min-w-0 flex-1">
-                        <p class="truncate text-sm font-medium text-gray-900 dark:text-white">{item.title}</p>
-                        <p class="truncate text-sm text-gray-500 dark:text-gray-499">{item.description}</p>
+                        <p class="truncate text-sm font-medium text-gray-900 dark:text-white">{alert.title}</p>
+                        <p class="truncate text-sm text-gray-500 dark:text-gray-499">{alert.description}</p>
                     </div>
                     <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                        {item.severity}
+                        {alert.severity}
                     </div>
                 </div>
                 {/snippet}

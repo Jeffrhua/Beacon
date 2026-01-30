@@ -39,6 +39,7 @@
 	},
 	"dependencies": {
 		"better-auth": "^1.4.6",
+		"leaflet": "^1.9.4",
 		"mongodb": "^7.0.0",
 		"tailwindcss": "^4.1.17"
 	}

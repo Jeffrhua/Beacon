@@ -1,13 +1,10 @@
 <script lang="ts">
     import { sidebar, Sidebar, SidebarGroup, SidebarItem  } from 'flowbite-svelte';
 	import { UsersGroupSolid, HomeSolid, BellSolid, CogSolid, MapPinSolid, GlobeSolid, TruckOutline } from 'flowbite-svelte-icons';
-    let { sidebarOpen } = $props();
 </script>
 
 <div class="relative">
     <div class="flex flex-col">
-
-	{#if sidebarOpen}
 	<Sidebar 
 		backdrop={false} 
 		params={{ x: -50, duration: 50 }} 
@@ -44,7 +41,6 @@
 
 		</SidebarGroup>
 	</Sidebar>
-	{/if}
     </div>
    
 </div>

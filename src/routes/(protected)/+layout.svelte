@@ -19,7 +19,7 @@
             <Sidebar></Sidebar>
         </aside>
     {/if}
-	<main class="overflow-y-auto">
+	<main class="overflow-y-auto p-4">
 		{@render children()}
 	</main>
 </div>

@@ -27,3 +27,5 @@
 
 @source "../node_modules/flowbite-svelte/dist";
 @source "../node_modules/flowbite-svelte-icons/dist";
+
+@import './lib/styles/accessibility.css';

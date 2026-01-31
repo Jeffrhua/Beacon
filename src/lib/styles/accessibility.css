@@ -1,0 +1,156 @@
+/* accessibility.css */
+
+/* ============================================
+   DARK MODE STYLES
+   ============================================ */
+
+:root[data-theme="dark"] {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+:root[data-theme="dark"] body {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+:root[data-theme="dark"] * {
+  color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .bg-gray-50 {
+  background-color: #2d2d2d !important;
+}
+
+:root[data-theme="dark"] .hover\:bg-gray-50:hover {
+  background-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea {
+  background-color: #374151;
+  color: #ffffff !important;
+  border-color: #4b5563;
+}
+
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] p,
+:root[data-theme="dark"] span,
+:root[data-theme="dark"] label {
+  color: #ffffff !important;
+}
+
+:root[data-theme="dark"] label.rounded:hover {
+  background-color: #374151 !important;
+}
+
+/* ============================================
+   HIGH CONTRAST MODE - LIGHT MODE
+   ============================================ */
+
+:root[data-contrast="high"] {
+  filter: contrast(2) !important;
+}
+
+:root[data-contrast="high"] * {
+  color: #000000 !important;
+  border-width: 2px !important;
+}
+
+:root[data-contrast="high"] body,
+:root[data-contrast="high"] .bg-gray-50,
+:root[data-contrast="high"] .bg-white {
+  background-color: #FFFFFF !important;
+}
+
+:root[data-contrast="high"] .text-gray-600,
+:root[data-contrast="high"] .text-gray-500,
+:root[data-contrast="high"] .text-gray-400 {
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+:root[data-contrast="high"] .border-gray-200,
+:root[data-contrast="high"] .border,
+:root[data-contrast="high"] input,
+:root[data-contrast="high"] textarea,
+:root[data-contrast="high"] button {
+  border: 3px solid #000000 !important;
+}
+
+:root[data-contrast="high"] button {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  font-weight: bold !important;
+}
+
+:root[data-contrast="high"] input,
+:root[data-contrast="high"] textarea {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+:root[data-contrast="high"] a {
+  color: #0000FF !important;
+  text-decoration: underline !important;
+  font-weight: bold !important;
+}
+
+:root[data-contrast="high"] h1,
+:root[data-contrast="high"] h2,
+:root[data-contrast="high"] h3 {
+  color: #000000 !important;
+  font-weight: 900 !important;
+}
+
+/* ============================================
+   HIGH CONTRAST MODE - DARK MODE
+   ============================================ */
+
+:root[data-theme="dark"][data-contrast="high"] * {
+  color: #FFFFFF !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] body,
+:root[data-theme="dark"][data-contrast="high"] .bg-gray-50 {
+  background-color: #000000 !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] .text-gray-600,
+:root[data-theme="dark"][data-contrast="high"] .text-gray-500 {
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] .border-gray-200,
+:root[data-theme="dark"][data-contrast="high"] input,
+:root[data-theme="dark"][data-contrast="high"] textarea,
+:root[data-theme="dark"][data-contrast="high"] button {
+  border: 3px solid #FFFFFF !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] button {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] input,
+:root[data-theme="dark"][data-contrast="high"] textarea {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] a {
+  color: #00FFFF !important;
+}

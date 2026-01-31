@@ -30,7 +30,7 @@
 		<TableBody>
 			{#each filteredGroups as group (group.id)}
 				<TableBodyRow>
-					<TableBodyCell><a class="text-[#a1bfff]" title="{group.title}" href="{page.url.pathname}/{group.id}">{group.title}</a></TableBodyCell>
+					<TableBodyCell><a class="text-[#a1bfff]" title="{group.title}" href="/groups/{group.id}">{group.title}</a></TableBodyCell>
 					<TableBodyCell>{group.description}</TableBodyCell>
 				</TableBodyRow>
 			{/each}

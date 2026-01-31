@@ -55,7 +55,7 @@
 
 </script>
 
-<div class="grid h-screen grid-cols-[75%_1fr] grid-rows-1 gap-2">
+<div class="grid h-full grid-cols-[75%_1fr] grid-rows-1 gap-2">
     <div>
         {#if data.group}
             <h1 class="text-2xl">{data.group.title}</h1>

@@ -2,6 +2,7 @@
   import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea, PhoneInput } from "flowbite-svelte";
   import { KeyboardSolid, LockSolid, UserSolid, InfoCircleSolid, CloseCircleSolid, CogSolid, EyeSolid } from "flowbite-svelte-icons";
   import { onMount } from 'svelte';
+  import { themeState } from "$lib/states/theme.svelte.js";
   
   const { data } = $props();
   const user = data.user ?? { displayName: "", name: "", profileDescription: "", phoneNumber: "" };
@@ -34,6 +35,7 @@
   }
 
   function applyTheme() {
+    themeState.value = theme;
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }
@@ -64,7 +66,7 @@
     <SidebarGroup>
       <SidebarItem label="Profile" onclick={() => currentSection = "profile"} class="cursor-pointer">
         {#snippet icon()}
-          <UserSolid class="shrink-0 h-6 w-6" />
+          <UserSolid class="shrink-0 h-6 w-6 " />
         {/snippet}
       </SidebarItem>
       <SidebarItem label="Appearance" onclick={() => currentSection = "appearance"} class="cursor-pointer">

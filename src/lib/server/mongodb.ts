@@ -15,6 +15,25 @@ export async function getUserSettingDb(){
     return db;
 }
 
+export async function getGroupFromAlert(alertId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  const userAlertId = await mainDb.collection('alert_group').findOne(
+    {
+      "alert_id": alertId
+    }
+  )
+  if(!userAlertId) return null;
+  const group = await mainDb.collection('group').findOne(
+    {
+      "_id": userAlertId.group_id
+    }
+  )
+  if(!group) return null;
+  return group;
+}
+
 // Get all the group ids a user is a part of
 export async function getUserGroupIds(userId: ObjectId){
   if(!mainDb){

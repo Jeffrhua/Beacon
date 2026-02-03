@@ -8,6 +8,7 @@ export function alertDbToAlert(a: AlertDb): Alert {
     longitude: a.longitude,
     latitude: a.latitude,
     address: a.address,
-    user_id: a.user_id.toString()
+    user_id: a.user_id.toString(),
+    dateCreated: a._id.getTimestamp()
   };
 }

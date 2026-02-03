@@ -3,7 +3,7 @@
 </script>
 
 <div>	
-	<a href="/groups">Look For Groups</a>
+	<a href="{page.url.pathname}/group-discovery">Look For Groups</a>
 	<a href="{page.url.pathname}/my-groups">My Groups</a>
 </div>
 

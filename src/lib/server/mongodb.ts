@@ -38,6 +38,15 @@ export async function getUserGroups(userId: ObjectId){
   return groups;
 }
 
+export async function getAllGroups(){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  const groups = await mainDb.collection<GroupDb>("group").find({}).toArray();
+  return groups;
+}
+
+
 // Get all users in a group
 export async function getGroupUsers(groupId: ObjectId){
   if(!mainDb){

@@ -8,9 +8,9 @@
     {:else if severity == "medium"}
         <Badge color="yellow">Medium</Badge>
     {:else if severity == "high"}
-        <Badge class="bg-[#f67e7e] text-[#822a2a]">High</Badge>
+        <Badge class="bg-[#dc0000] dark:bg-[#dc0000] text-white">High</Badge>
     {:else if severity == "critical"}
-        <Badge class="bg-[#9e0000] text-white">Critical</Badge>
+        <Badge class="bg-[#780000] dark:bg-[#780000] text-white dark:text-white">Critical</Badge>
     {/if}
 </div>
 

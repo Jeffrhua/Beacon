@@ -3,6 +3,7 @@
     import {Card, Listgroup, Button, Modal, Label, Input, Select, Textarea} from "flowbite-svelte";
     import {UserOutline} from "flowbite-svelte-icons";
     import SendAlertModal from '$lib/components/SendAlertModal.svelte';
+    import SeverityBadge from '$lib/components/SeverityBadge.svelte';
 
     let { id } = page.params;
     let { data } = $props();
@@ -39,7 +40,7 @@
             id: 4,
             title: "TestAlert1",
             description: "TestDescription5",
-            severity: "unknown"
+            severity: "low"
         }]
     console.log(data.owner)
 
@@ -98,7 +99,7 @@
                         <p class="truncate text-sm text-gray-500 dark:text-gray-499">{alert.description}</p>
                     </div>
                     <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                        {alert.severity}
+                        <SeverityBadge severity={alert.severity}></SeverityBadge>
                     </div>
                 </div>
                 {/snippet}

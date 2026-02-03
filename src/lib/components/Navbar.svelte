@@ -3,6 +3,7 @@
 	import { HomeSolid, BellSolid } from 'flowbite-svelte-icons';
     import { Button, Dropdown, DropdownItem, ListgroupItem } from "flowbite-svelte";
     import { Card, Listgroup, Avatar } from "flowbite-svelte";
+    import SeverityBadge from "$lib/components/SeverityBadge.svelte";
     let {toggleSidebar, title, notifications = []} = $props();
     let activeUrl = $derived(page.url.pathname);
 </script>
@@ -37,7 +38,7 @@
                             </div>
 
                             <div class="ml-auto shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                                {item.alertSeverity}
+                                <SeverityBadge severity={item.alertSeverity}></SeverityBadge>
                             </div>
                         </div>
                     </ListgroupItem>

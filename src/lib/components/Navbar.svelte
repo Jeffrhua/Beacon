@@ -1,6 +1,6 @@
 <script lang="ts">
-    let {toggleSidebar, title} = $props();
-	import { HomeSolid } from 'flowbite-svelte-icons';
+    let {toggleSidebar, title, notifications = []} = $props();
+	import { HomeSolid, BellSolid } from 'flowbite-svelte-icons';
 
 </script>
 
@@ -13,5 +13,8 @@
         <h1 class="text-lg font-semibold">
             {title}
         </h1>
+    </div>
+    <div>
+        <BellSolid class="shrink-0 h-7 w-7 cursor-pointer dark:text-white hover:text-gray-700 "/>
     </div>
 </div>

@@ -1,6 +1,7 @@
 import { ObjectId, type Db } from 'mongodb';
 import { client } from './auth'
-import type { GroupDb, UserDb } from '$lib/types';
+import type { GroupDb, UserDb, AlertDb, Alert } from '$lib/types';
+import { alertDbToAlert } from '$lib/db-type-conversions';
 
 let db: Db;
 let mainDb: Db;
@@ -14,18 +15,45 @@ export async function getUserSettingDb(){
     return db;
 }
 
-// Get all groups a user is a part of
-export async function getUserGroups(userId: ObjectId){
+export async function getGroupFromAlert(alertId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
   }
-  const userGroups = await mainDb.collection("user_group").find(
+  const userAlertId = await mainDb.collection('alert_group').findOne(
+    {
+      "alert_id": alertId
+    }
+  )
+  if(!userAlertId) return null;
+  const group = await mainDb.collection('group').findOne(
+    {
+      "_id": userAlertId.group_id
+    }
+  )
+  if(!group) return null;
+  return group;
+}
+
+// Get all the group ids a user is a part of
+export async function getUserGroupIds(userId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+   const userGroups = await mainDb.collection("user_group").find(
     {
       "user_id": userId
     }
   ).toArray();
-
   const groupIds : ObjectId[] = userGroups.map((g) => g.group_id as ObjectId)
+  return groupIds
+}
+
+// Get all group objects a user is a part of
+export async function getUserGroups(userId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  const groupIds : ObjectId[] = await getUserGroupIds(userId);
   if (groupIds.length == 0) return [];
   const groups = await mainDb.collection<GroupDb>("group").find(
     {
@@ -46,7 +74,19 @@ export async function getAllGroups(){
   return groups;
 }
 
+export async function getAlert(alertId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  const alert = await mainDb.collection('alert').findOne(
+    {
+      "_id": alertId
+    }
+  )
 
+  if(!alert) return null;
+  return alert;
+}
 // Get all users in a group
 export async function getGroupUsers(groupId: ObjectId){
   if(!mainDb){
@@ -101,4 +141,31 @@ export async function getUser(userId: ObjectId){
   );
   console.log(userId)
   return user;
+}
+
+// Get all of the User's alerts from groups they're a part of
+export async function getAllUserAlerts(userId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  const userGroups : ObjectId[] = await getUserGroupIds(userId);
+  if(userGroups.length == 0) return [];
+  const userAlertIds = await mainDb.collection('alert_group').find(
+    {
+      "group_id" : {
+        "$in":userGroups
+      }
+    }
+  ).map((ag) => ag.alert_id)
+  .toArray();
+  
+  const alerts = await Promise.all(
+    userAlertIds.map(id => getAlert(id))
+  );
+
+  const alertsDb: AlertDb[] = alerts.filter((a): a is AlertDb => a !== null);
+  const userAlerts: Alert[] = alertsDb.map(alertDbToAlert);
+
+  return userAlerts
+
 }

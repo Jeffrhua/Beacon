@@ -33,7 +33,8 @@ export type AlertDb = {
   longitude: Double,
   latitude: Double,
   address: string,
-  user_id: ObjectId
+  user_id: ObjectId,
+  dateCreated: Date
 }
 
 export type Alert = {
@@ -44,5 +45,6 @@ export type Alert = {
   longitude: Double,
   latitude: Double,
   address: string,
-  user_id: string
+  user_id: string,
+  dateCreated: Date
 }

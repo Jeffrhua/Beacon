@@ -2,9 +2,9 @@
   import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea, PhoneInput } from "flowbite-svelte";
   import { KeyboardSolid, LockSolid, UserSolid, InfoCircleSolid, CloseCircleSolid, EyeSolid } from "flowbite-svelte-icons";
   import { onMount } from 'svelte';
-  import { themeState } from "$lib/states/theme.svelte.js";
   import { client } from "$lib/auth-client";
   import { goto } from "$app/navigation";
+  import { theme } from "$lib/stores/theme.js";
   
   const { data } = $props();
   const user = data.user ?? { displayName: "", name: "", profileDescription: "", phoneNumber: "" };
@@ -12,13 +12,13 @@
   let currentSection = $state<"profile" | "accessibility" | "security" | "terms" | "appearance">("profile");
   
   let fontSize = $state<'small' | 'medium' | 'large' | 'xlarge'>('medium');
-  let theme = $state<'light' | 'dark'>('light');
+  let themeBtn = $state("light");
   let highContrast = $state<boolean>(false);
 
   onMount(() => {
     fontSize = (localStorage.getItem('fontSize') as any) || 'medium';
-    theme = (localStorage.getItem('theme') as any) || 'light';
     highContrast = localStorage.getItem('highContrast') === 'true';
+    themeBtn = $theme
     
     applyFontSize();
     applyTheme();
@@ -37,9 +37,7 @@
   }
 
   function applyTheme() {
-    themeState.value = theme;
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    theme.set(themeBtn)
   }
   
   function applyHighContrast() {
@@ -153,11 +151,11 @@
           <p class="text-gray-600 mb-4">Choose between light and dark mode</p>
           <div class="space-y-2">
             <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
-              <input type="radio" bind:group={theme} value="light" onchange={applyTheme} class="w-4 h-4" />
+              <input type="radio" bind:group={themeBtn} value="light" onchange={applyTheme} class="w-4 h-4" />
               <span>Light Mode</span>
             </Label>
             <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
-              <input type="radio" bind:group={theme} value="dark" onchange={applyTheme} class="w-4 h-4" />
+              <input type="radio" bind:group={themeBtn} value="dark" onchange={applyTheme} class="w-4 h-4" />
               <span>Dark Mode</span>
             </Label>
           </div>

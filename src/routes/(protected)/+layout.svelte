@@ -3,17 +3,11 @@
     import Navbar from "$lib/components/Navbar.svelte";
 	import {browser} from "$app/environment";
     import { onMount } from "svelte";
-    import "../../app.css"
+    import { theme } from "$lib/stores/theme";
     let { children, data } = $props();
     
     let notifcations = data.userAlerts.length !== 0 ? data.userAlerts : [];
     let sidebarOpen = $state(true);
-    let theme = $state("light");
-    onMount(()=>{
-        if( browser ){
-	        theme = localStorage.getItem('theme') || 'light';
-        }
-    })
     function toggleSidebar(){
         sidebarOpen = !sidebarOpen;
     }
@@ -21,7 +15,7 @@
     
 </script>
 
-<div class="{theme} app h-screen grid grid-rows-[64px_1fr] bg-[#FFFFFF] {sidebarOpen ? "grid-cols-[240px_1fr]" : "grid-cols-1"}">
+<div class="{$theme} app h-screen grid grid-rows-[64px_1fr] bg-[#FFFFFF] {sidebarOpen ? "grid-cols-[240px_1fr]" : "grid-cols-1"}">
     <header class="{sidebarOpen ? "col-span-2" : "col-span-1"} z-50">
         <Navbar toggleSidebar={toggleSidebar} notifications={notifcations} title="Dashboard"></Navbar>
     </header>

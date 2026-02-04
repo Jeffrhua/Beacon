@@ -66,6 +66,7 @@ export async function getUserGroups(userId: ObjectId){
   return groups;
 }
 
+// Get all groups
 export async function getAllGroups(){
   if(!mainDb){
     mainDb = client.db('main');
@@ -117,6 +118,7 @@ export async function getGroupUsers(groupId: ObjectId){
   return users
 }
 
+// Get group from group id
 export async function getGroup(groupId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
@@ -130,6 +132,7 @@ export async function getGroup(groupId: ObjectId){
   return group;
 }
 
+// Get user from user id
 export async function getUser(userId: ObjectId){
   if(!db){
     db = client.db('Beacon');
@@ -167,5 +170,55 @@ export async function getAllUserAlerts(userId: ObjectId){
   const userAlerts: Alert[] = alertsDb.map(alertDbToAlert);
 
   return userAlerts
+}
 
+// Check if user is in a given group
+export async function checkGroupMembership(userId: ObjectId, groupId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  const membership = await mainDb.collection("user_group").findOne(
+    {
+      "user_id": userId,
+      "group_id": groupId
+    }
+  );
+
+  return (membership != null);
+}
+
+// Add user to group
+export async function addGroupMember(userId: ObjectId, groupId: ObjectId, userRole: string){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  try {
+    await mainDb.collection("user_group").insertOne({
+      "user_id": userId,
+      "group_id": groupId,
+      "user_role": userRole
+    })
+  }
+  catch (error) {
+    console.error("Error:", error)
+  }
+}
+
+// Remove user from group
+export async function removeGroupMember(userId: ObjectId, groupId: ObjectId) {
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  try {
+    await mainDb.collection("user_group").deleteOne({
+      "user_id": userId,
+      "group_id": groupId,
+    })
+  }
+  catch (error) {
+    console.error("Error:", error)
+  }
 }

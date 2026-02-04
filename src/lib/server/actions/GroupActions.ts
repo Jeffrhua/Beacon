@@ -1,5 +1,6 @@
 import { ObjectId, Double } from 'mongodb';
 import { client } from "$lib/server/auth";
+import { addGroupMember, removeGroupMember } from "$lib/server/mongodb";
 
 export const GroupActions = {
     sendAlert: async ({ request, params, locals }) => {
@@ -39,5 +40,11 @@ export const GroupActions = {
         })
 
         return { success: true, message: 'yayyy!!!' }
+    },
+    joinGroup: async ({ params, locals }) => {
+        await addGroupMember(new ObjectId(locals.user.id), new ObjectId(params.id), "member")
+    },
+    leaveGroup: async ({ params, locals }) => {
+        await removeGroupMember(new ObjectId(locals.user.id), new ObjectId(params.id))
     }
 }

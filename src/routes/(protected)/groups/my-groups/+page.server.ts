@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { getUserGroups, getGroupUsers } from "$lib/server/mongodb";
+import { getUserGroups } from "$lib/server/mongodb";
 import type { Group, GroupDb, User, UserDb } from "$lib/types.js";
 
 

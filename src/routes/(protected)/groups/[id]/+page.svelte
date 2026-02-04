@@ -1,9 +1,11 @@
 <script lang="ts">
     import {page} from '$app/state';
-    import {Card, Listgroup, Button, Modal, Label, Input, Select, Textarea} from "flowbite-svelte";
+    import {Card, Listgroup, Button} from "flowbite-svelte";
     import {UserOutline} from "flowbite-svelte-icons";
     import SendAlertModal from '$lib/components/SendAlertModal.svelte';
     import SeverityBadge from '$lib/components/SeverityBadge.svelte';
+    import JoinGroupBtn from '$lib/components/JoinGroupBtn.svelte';
+    import RemoveGroupBtn from '$lib/components/RemoveGroupBtn.svelte';
 
     let { id } = page.params;
     let { data } = $props();
@@ -45,7 +47,6 @@
     console.log(data.owner)
 
     const isOwner = data.owner?.id === data.currentUser?.id;
-
 </script>
 
 <div class="grid h-full grid-cols-[75%_1fr] grid-rows-1 gap-2">
@@ -105,6 +106,14 @@
                 {/snippet}
             </Listgroup>
         </Card>
+
+        {#if !data.isMember}
+            <JoinGroupBtn></JoinGroupBtn>
+        {/if}
+
+        {#if data.isMember}
+            <RemoveGroupBtn></RemoveGroupBtn>
+        {/if}
 
         {#if isOwner}
             <Button onclick={() => (formModal = true)}>Send an alert</Button>

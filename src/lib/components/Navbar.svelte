@@ -8,7 +8,7 @@
     let activeUrl = $derived(page.url.pathname);
 </script>
 
-<div class="w-full flex items-center justify-between px-4 py-3 border-b bg-gray-50">
+<div class="w-full flex items-center justify-between px-4 py-3 bg-gray-50">
     <button class="p-2 hover:bg-gray-200 rounded" onclick={toggleSidebar} aria-label="Toggle menu">
 		☰
 	</button>

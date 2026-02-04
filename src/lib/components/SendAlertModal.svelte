@@ -1,5 +1,5 @@
 <script>
-    import {Card, Listgroup, Button, Modal, Label, Input, Select, Textarea} from "flowbite-svelte";
+    import {Button, Modal, Label, Input, Select, Textarea} from "flowbite-svelte";
     let {formModal = $bindable(false)} = $props();
     let error = $state("");
     let severity = $state("");

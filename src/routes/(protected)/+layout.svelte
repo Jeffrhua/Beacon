@@ -14,11 +14,11 @@
 </script>
 
 <div class="{themeState.value} app h-screen grid grid-rows-[64px_1fr] dark:bg-[#1C1E22] bg-[#FFFFFF] {sidebarOpen ? "grid-cols-[240px_1fr]" : "grid-cols-1"}">
-    <header class={sidebarOpen ? "col-span-2" : "col-span-1"}>
+    <header class="{sidebarOpen ? "col-span-2" : "col-span-1"} z-50">
         <Navbar toggleSidebar={toggleSidebar} notifications={notifcations} title="Dashboard"></Navbar>
     </header>
     {#if sidebarOpen}
-        <aside class="overflow-y-auto">
+        <aside class="overflow-y-auto z-50">
             <Sidebar></Sidebar>
         </aside>
     {/if}

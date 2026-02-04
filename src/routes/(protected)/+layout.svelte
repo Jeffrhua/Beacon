@@ -24,7 +24,7 @@
             <Sidebar></Sidebar>
         </aside>
     {/if}
-	<main class="overflow-y-auto p-4 ">
+	<main class="overflow-y-auto p-4 dark:bg-[#1C1E22]">
 		{@render children()}
 	</main>
 </div>

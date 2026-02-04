@@ -4,5 +4,5 @@
  
 
 <form method="POST" action="?/joinGroup" class="flex flex-col space-y-6">
-    <Button type="submit">Join Group</Button>
+    <Button type="submit" class="dark:bg-amber-700">Join Group</Button>
 </form>

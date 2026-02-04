@@ -44,8 +44,6 @@
             description: "TestDescription5",
             severity: "low"
         }]
-    console.log(data.owner)
-
     const isOwner = data.owner?.id === data.currentUser?.id;
 </script>
 
@@ -61,8 +59,8 @@
             <div class="flex items-center">
                 <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">Info</h5>
                 <div class="ml-auto flex items-center">
-                    <UserOutline class="h-5 w-5 translate-x-[-5px]"/> 
-                    <p>{data.users.length}</p>
+                    <UserOutline class="h-5 w-5 translate-x-[-5px] text-gray-900 dark:text-white"/> 
+                    <p class="text-gray-900 dark:text-white">{data.users.length}</p>
                 </div>
 
             </div>
@@ -70,7 +68,7 @@
             <div>
                 <h6 class="text-md font-semibold text-gray-900 dark:text-white">Owner:</h6>
                 {#if data.owner}
-                    <p>{data.owner.displayName ? data.owner.displayName : data.owner.name}</p>
+                    <p class="text-gray-900 dark:text-white">{data.owner.displayName ? data.owner.displayName : data.owner.name}</p>
                 {/if}
             </div>
             <div>

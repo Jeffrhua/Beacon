@@ -19,7 +19,7 @@
         </h1>
     </div>
     <div class="px-10">
-        <Button outline color="dark"><BellSolid class="shrink-0 h-7 w-7 cursor-pointer dark:text-white hover:text-gray-700"/></Button>
+        <Button outline color="dark"><BellSolid class="shrink-0 h-7 w-7 cursor-pointer dark:text-white"/></Button>
         <Dropdown activeUrl={activeUrl}>
             <Listgroup items={notifications} class="border-0 dark:bg-transparent! w-[300px]">
                 {#snippet children(item)}

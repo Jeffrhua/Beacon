@@ -16,13 +16,13 @@
 		{activeUrl}
 		backdrop={false}
 		position="absolute"
-		class="relative z-50 px-0! h-full !bg-[#17191C] dark:!bg-[#17191C]"
+		class="relative z-50 px-0! h-full bg-[#F9FAFB] dark:!bg-[#17191C]"
 		classes={{
-			nonactive: "flex items-center p-2 text-white hover:bg-[#222326]",
-			active: "flex items-center p-2 text-white bg-[#222326]"
+			nonactive: "flex items-center p-2 text-gray-80 dark:text-white dark:hover:bg-[#222326]",
+			active: "flex items-center p-2 text-gray-80 dark:text-white dark:bg-[#222326]"
 		}}
 		>
-		<SidebarGroup class=" w-full h-full !bg-[#17191C] dark:!bg-[#17191C]">
+		<SidebarGroup class=" w-full h-full bg-[#F9FAFB] dark:!bg-[#17191C]">
 			<SidebarItem label="Alerts" href="/alerts">
 				{#snippet icon()}
 					<BellSolid class="shrink-0 h-6 w-6" />

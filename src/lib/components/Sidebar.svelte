@@ -11,7 +11,7 @@
 		activeUrl = page.url.pathname;
 	});
 </script>
-<div class="beacon-sidebar h-full">
+<div class="beacon-sidebar h-full overflow-x-hidden">
 	<Sidebar
 		{activeUrl}
 		backdrop={false}

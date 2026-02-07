@@ -23,7 +23,6 @@ export const load = async ({params, locals}) => {
         : null;
 
     // Check user 
-    console.log(locals.user)
     const user_id = new ObjectId(locals.user?.id)
     const isMember = await checkGroupMembership(user_id, groupId);
     // Load users in current group

@@ -10,9 +10,6 @@
     let { id } = page.params;
     let { data } = $props();
     let formModal = $state(false);
-    if(data.error){
-        console.log("Not found")
-    }
     let alerts = data.alerts ? data.alerts : []
     const isOwner = data.owner?.id === data.currentUser?.id;
 </script>

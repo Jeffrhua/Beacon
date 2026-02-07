@@ -142,7 +142,6 @@ export async function getUser(userId: ObjectId){
       "_id": userId
     }
   );
-  console.log(userId)
   return user;
 }
 

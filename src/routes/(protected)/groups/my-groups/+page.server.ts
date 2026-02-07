@@ -24,6 +24,5 @@ export const load = async ({locals}) => {
     //     ...r
     // }))
 
-    console.log(serialized)
     return {groups: serialized}
 }

@@ -222,3 +222,23 @@ export async function removeGroupMember(userId: ObjectId, groupId: ObjectId) {
     console.error("Error:", error)
   }
 }
+
+export async function getGroupAlerts(groupId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  const alert_groups = await mainDb.collection('alert_group').find(
+    {
+      "group_id": groupId
+    }
+  ).toArray();
+
+  const alertIds = alert_groups.map((a)=>a.alert_id)
+  const alertsDb: AlertDb[] = await Promise.all(
+    alertIds.map((a)=>getAlert(a))
+  )
+  const alerts: Alert[] = await Promise.all(
+    alertsDb.map((a) => alertDbToAlert(a))
+  )
+  return alerts;
+}

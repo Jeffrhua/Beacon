@@ -1,4 +1,4 @@
-import { getGroup, getGroupUsers, getUser, checkGroupMembership } from '$lib/server/mongodb.js'
+import { getGroup, getGroupUsers, getUser, checkGroupMembership, getGroupAlerts } from '$lib/server/mongodb.js'
 import { ObjectId } from 'mongodb';
 import { GroupActions } from '$lib/server/actions/GroupActions.js';
 
@@ -32,12 +32,15 @@ export const load = async ({params, locals}) => {
         users.push({id: u._id.toString(), name: u.name, displayName: u.displayName})
     })
     const {_id, owner_id, ...r} = group;
+
+    const groupAlerts = await getGroupAlerts(groupId);
     return {
         group: {id: _id.toString(), ...r},
         users: users,
         owner: ownerSerialized,
         currentUser: user_id.toString(),
-        isMember: isMember
+        isMember: isMember,
+        alerts: groupAlerts
     }
 }
 

@@ -13,37 +13,7 @@
     if(data.error){
         console.log("Not found")
     }
-    let alerts = [
-        {
-            id: 1,
-            title: "TestAlert1",
-            description: "TestDescription1",
-            severity: "low"
-        },
-        {
-            id: 2,
-            title: "TestAlert2",
-            description: "TestDescription2",
-            severity: "medium"
-        },
-        {
-            id: 3,
-            title: "TestAlert3",
-            description: "TestDescription3",
-            severity: "high"
-        },
-        {
-            id: 4,
-            title: "TestAlert1",
-            description: "TestDescription4",
-            severity: "critical"
-        },
-        {
-            id: 4,
-            title: "TestAlert1",
-            description: "TestDescription5",
-            severity: "low"
-        }]
+    let alerts = data.alerts ? data.alerts : []
     const isOwner = data.owner?.id === data.currentUser?.id;
 </script>
 

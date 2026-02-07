@@ -21,7 +21,10 @@
             <h2 class="text-2md">{data.group.description}</h2>
         {/if}
     </div>
-    <div class="flex flex-col m-2">
+
+    <!-- Right side area with two cards -->
+    <div class="flex flex-col m-2 overflow-x-hidden">
+        <!-- Info Card -->
         <Card class="p-4 w-full max-w-none">
             <div class="flex items-center">
                 <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">Info</h5>
@@ -53,6 +56,7 @@
             </div>
         </Card>
 
+        <!-- Alerts Display Area -->
         <Card class="p-4 w-full flex-1 max-w-none">
             <div class="mb-4 flex items-center justify-between">
                 <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">Latest Alerts</h5>

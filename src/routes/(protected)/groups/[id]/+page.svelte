@@ -6,12 +6,16 @@
     import SeverityBadge from '$lib/components/SeverityBadge.svelte';
     import JoinGroupBtn from '$lib/components/JoinGroupBtn.svelte';
     import RemoveGroupBtn from '$lib/components/RemoveGroupBtn.svelte';
+    import DeleteGroupBtn from '$lib/components/DeleteGroupBtn.svelte';
 
     let { id } = page.params;
     let { data } = $props();
     let formModal = $state(false);
+    let deleteGroupForm = $state(false);
     let alerts = data.alerts ? data.alerts : []
-    const isOwner = data.owner?.id === data.currentUser?.id;
+    const isOwner = data.owner?.id === data.currentUser;
+
+    console.log(data.owner?.id)
 </script>
 
 <div class="grid h-full grid-cols-[75%_1fr] grid-rows-1 gap-2">
@@ -80,13 +84,16 @@
             <JoinGroupBtn></JoinGroupBtn>
         {/if}
 
-        {#if data.isMember}
+        {#if data.isMember && !isOwner}
             <RemoveGroupBtn></RemoveGroupBtn>
         {/if}
 
         {#if isOwner}
             <Button onclick={() => (formModal = true)}>Send an alert</Button>
             <SendAlertModal bind:formModal></SendAlertModal>
+            
+            <Button onclick={() => (deleteGroupForm = true)}>Delete group</Button>
+            <DeleteGroupBtn bind:deleteGroupForm></DeleteGroupBtn>
         {/if}
 
     </div>

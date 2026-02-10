@@ -1,50 +1,17 @@
 <script lang="ts">
     import {page} from '$app/state';
-    import {Card, Listgroup, Button, Modal, Label, Input, Select, Textarea} from "flowbite-svelte";
+    import {Card, Listgroup, Button} from "flowbite-svelte";
     import {UserOutline} from "flowbite-svelte-icons";
     import SendAlertModal from '$lib/components/SendAlertModal.svelte';
+    import SeverityBadge from '$lib/components/SeverityBadge.svelte';
+    import JoinGroupBtn from '$lib/components/JoinGroupBtn.svelte';
+    import RemoveGroupBtn from '$lib/components/RemoveGroupBtn.svelte';
 
     let { id } = page.params;
     let { data } = $props();
     let formModal = $state(false);
-    if(data.error){
-        console.log("Not found")
-    }
-    let alerts = [
-        {
-            id: 1,
-            title: "TestAlert1",
-            description: "TestDescription1",
-            severity: "low"
-        },
-        {
-            id: 2,
-            title: "TestAlert2",
-            description: "TestDescription2",
-            severity: "medium"
-        },
-        {
-            id: 3,
-            title: "TestAlert3",
-            description: "TestDescription3",
-            severity: "high"
-        },
-        {
-            id: 4,
-            title: "TestAlert1",
-            description: "TestDescription4",
-            severity: "critical"
-        },
-        {
-            id: 4,
-            title: "TestAlert1",
-            description: "TestDescription5",
-            severity: "unknown"
-        }]
-    console.log(data.owner)
-
+    let alerts = data.alerts ? data.alerts : []
     const isOwner = data.owner?.id === data.currentUser?.id;
-
 </script>
 
 <div class="grid h-full grid-cols-[75%_1fr] grid-rows-1 gap-2">
@@ -54,13 +21,16 @@
             <h2 class="text-2md">{data.group.description}</h2>
         {/if}
     </div>
-    <div class="flex flex-col m-2">
+
+    <!-- Right side area with two cards -->
+    <div class="flex flex-col m-2 overflow-x-hidden">
+        <!-- Info Card -->
         <Card class="p-4 w-full max-w-none">
             <div class="flex items-center">
                 <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">Info</h5>
                 <div class="ml-auto flex items-center">
-                    <UserOutline class="h-5 w-5 translate-x-[-5px]"/> 
-                    <p>{data.users.length}</p>
+                    <UserOutline class="h-5 w-5 translate-x-[-5px] text-gray-900 dark:text-white"/> 
+                    <p class="text-gray-900 dark:text-white">{data.users.length}</p>
                 </div>
 
             </div>
@@ -68,7 +38,7 @@
             <div>
                 <h6 class="text-md font-semibold text-gray-900 dark:text-white">Owner:</h6>
                 {#if data.owner}
-                    <p>{data.owner.displayName ? data.owner.displayName : data.owner.name}</p>
+                    <p class="text-gray-900 dark:text-white">{data.owner.displayName ? data.owner.displayName : data.owner.name}</p>
                 {/if}
             </div>
             <div>
@@ -86,6 +56,7 @@
             </div>
         </Card>
 
+        <!-- Alerts Display Area -->
         <Card class="p-4 w-full flex-1 max-w-none">
             <div class="mb-4 flex items-center justify-between">
                 <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">Latest Alerts</h5>
@@ -98,12 +69,20 @@
                         <p class="truncate text-sm text-gray-500 dark:text-gray-499">{alert.description}</p>
                     </div>
                     <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                        {alert.severity}
+                        <SeverityBadge severity={alert.severity}></SeverityBadge>
                     </div>
                 </div>
                 {/snippet}
             </Listgroup>
         </Card>
+
+        {#if !data.isMember}
+            <JoinGroupBtn></JoinGroupBtn>
+        {/if}
+
+        {#if data.isMember}
+            <RemoveGroupBtn></RemoveGroupBtn>
+        {/if}
 
         {#if isOwner}
             <Button onclick={() => (formModal = true)}>Send an alert</Button>

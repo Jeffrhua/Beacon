@@ -1,8 +1,10 @@
 <script lang="ts">
   import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea, PhoneInput } from "flowbite-svelte";
-  import { KeyboardSolid, LockSolid, UserSolid, InfoCircleSolid, CloseCircleSolid, CogSolid, EyeSolid } from "flowbite-svelte-icons";
+  import { KeyboardSolid, LockSolid, UserSolid, InfoCircleSolid, CloseCircleSolid, EyeSolid } from "flowbite-svelte-icons";
   import { onMount } from 'svelte';
-  import { themeState } from "$lib/states/theme.svelte.js";
+  import { client } from "$lib/auth-client";
+  import { goto } from "$app/navigation";
+  import { theme } from "$lib/stores/theme.js";
   
   const { data } = $props();
   const user = data.user ?? { displayName: "", name: "", profileDescription: "", phoneNumber: "" };
@@ -10,13 +12,13 @@
   let currentSection = $state<"profile" | "accessibility" | "security" | "terms" | "appearance">("profile");
   
   let fontSize = $state<'small' | 'medium' | 'large' | 'xlarge'>('medium');
-  let theme = $state<'light' | 'dark'>('light');
+  let themeBtn = $state("light");
   let highContrast = $state<boolean>(false);
 
   onMount(() => {
     fontSize = (localStorage.getItem('fontSize') as any) || 'medium';
-    theme = (localStorage.getItem('theme') as any) || 'light';
     highContrast = localStorage.getItem('highContrast') === 'true';
+    themeBtn = $theme
     
     applyFontSize();
     applyTheme();
@@ -35,9 +37,7 @@
   }
 
   function applyTheme() {
-    themeState.value = theme;
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    theme.set(themeBtn)
   }
   
   function applyHighContrast() {
@@ -48,18 +48,17 @@
     }
     localStorage.setItem('highContrast', highContrast.toString());
   }
+
+  async function handleSignOut(){
+    await client.signOut({
+      fetchOptions:{
+        onSuccess: () => {goto("/sign-in")}
+      }
+    })
+  }
 </script>
 
-<div class="w-full flex items-center justify-between px-4 py-3 border-b bg-gray-50">
-  <a href="/" class="inline-flex items-center justify-center p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
-    <CloseCircleSolid class="h-6 w-6" />
-  </a>
 
-  <div class="flex-1 flex justify-center gap-2 items-center pointer-events-none">
-    <CogSolid class="shrink-0 h-6 w-6" />
-    <h1 class="text-lg font-semibold">Settings</h1>
-  </div>
-</div>
 
 <div class="relative">
   <Sidebar backdrop={false} params={{ x: -50, duration: 50 }} class="z-50 h-full" position="absolute" classes={{ nonactive: "p-2", active: "p-2" }}>
@@ -87,6 +86,11 @@
       <SidebarItem label="Terms of service" onclick={() => currentSection = "terms"} class="cursor-pointer">
         {#snippet icon()}
           <InfoCircleSolid class="shrink-0 h-6 w-6" />
+        {/snippet}
+      </SidebarItem>
+            <SidebarItem label="Logout" onclick={handleSignOut} class="cursor-pointer">
+        {#snippet icon()}
+          <CloseCircleSolid class="shrink-0 h-6 w-6" />
         {/snippet}
       </SidebarItem>
     </SidebarGroup>
@@ -147,11 +151,11 @@
           <p class="text-gray-600 mb-4">Choose between light and dark mode</p>
           <div class="space-y-2">
             <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
-              <input type="radio" bind:group={theme} value="light" onchange={applyTheme} class="w-4 h-4" />
+              <input type="radio" bind:group={themeBtn} value="light" onchange={applyTheme} class="w-4 h-4" />
               <span>Light Mode</span>
             </Label>
             <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
-              <input type="radio" bind:group={theme} value="dark" onchange={applyTheme} class="w-4 h-4" />
+              <input type="radio" bind:group={themeBtn} value="dark" onchange={applyTheme} class="w-4 h-4" />
               <span>Dark Mode</span>
             </Label>
           </div>

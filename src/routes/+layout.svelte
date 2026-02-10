@@ -1,9 +1,11 @@
 <script lang="ts">
-	import {themeState} from "$lib/states/theme.svelte";
+	import {browser} from "$app/environment";
+    import { onMount } from "svelte";
+	import { theme } from "$lib/stores/theme";
 	let { children } = $props();
 </script>
 
-<div class="{themeState.value} app">
+<div class="{$theme} app">
 	<main>
 		{@render children()}
 	</main>

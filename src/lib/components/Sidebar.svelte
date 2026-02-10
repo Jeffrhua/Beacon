@@ -1,18 +1,28 @@
 <script lang="ts">
-    import { sidebar, Sidebar, SidebarGroup, SidebarItem  } from 'flowbite-svelte';
+    import { sidebar, Sidebar, SidebarGroup, SidebarItem, SidebarButton, uiHelpers  } from 'flowbite-svelte';
 	import { UsersGroupSolid, HomeSolid, BellSolid, CogSolid, MapPinSolid, GlobeSolid, TruckOutline } from 'flowbite-svelte-icons';
+	import { page } from "$app/state";
+	let activeUrl = $state(page.url.pathname);
+	const spanClass = "flex-1 ms-3 whitespace-nowrap";
+	const demoSidebarUi = uiHelpers();
+	let isDemoOpen = $state(false);
+	$effect(() => {
+		isDemoOpen = demoSidebarUi.isOpen;
+		activeUrl = page.url.pathname;
+	});
 </script>
-
-<div class="relative">
-    <div class="flex flex-col">
-	<Sidebar 
-		backdrop={false} 
-		params={{ x: -50, duration: 50 }} 
-		class="z-50 h-full" 
-		position="absolute" 
-		classes={{ nonactive: 'p-2', active: 'p-2' }}
-	>
-		<SidebarGroup>
+<div class="beacon-sidebar h-full overflow-x-hidden">
+	<Sidebar
+		{activeUrl}
+		backdrop={false}
+		position="absolute"
+		class="relative z-50 px-0! h-full bg-[#F9FAFB] dark:!bg-[#17191C]"
+		classes={{
+			nonactive: "flex items-center p-2 text-gray-80 dark:text-white dark:hover:bg-[#222326]",
+			active: "flex items-center p-2 text-gray-80 dark:text-white dark:bg-[#222326]"
+		}}
+		>
+		<SidebarGroup class=" w-full h-full bg-[#F9FAFB] dark:!bg-[#17191C]">
 			<SidebarItem label="Alerts" href="/alerts">
 				{#snippet icon()}
 					<BellSolid class="shrink-0 h-6 w-6" />
@@ -41,7 +51,11 @@
 
 		</SidebarGroup>
 	</Sidebar>
-    </div>
-   
 </div>
+   
 
+<style>
+  :global(.beacon-sidebar .px-3.py-4) {
+    padding: 0 !important;
+  }
+</style>

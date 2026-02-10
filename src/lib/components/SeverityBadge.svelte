@@ -12,5 +12,5 @@
     {:else if severity == "critical"}
         <Badge class="bg-[#780000] dark:bg-[#780000] text-white dark:text-white">Critical</Badge>
     {/if}
-</div>
+</div>  
 

@@ -38,7 +38,7 @@
                             </div>
 
                             <div class="ml-auto shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                                <SeverityBadge severity={item.alertSeverity}></SeverityBadge>
+                                <SeverityBadge severity={item?.alertSeverity}></SeverityBadge>
                             </div>
                         </div>
                     </ListgroupItem>

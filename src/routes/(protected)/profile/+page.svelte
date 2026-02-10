@@ -35,7 +35,7 @@
                 {/if}
             </div>
 
-            <!-- Last Name -->
+            <!-- Last Name i think -->
             <div>
                 <Label for="lastName" class="mb-2">Last name</Label>
                 <Input

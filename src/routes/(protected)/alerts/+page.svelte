@@ -32,7 +32,7 @@
         <TableBodyCell>{item?.alertCreated}</TableBodyCell>
         <TableBodyCell>{item?.alertTitle}</TableBodyCell>
         <TableBodyCell>{item?.alertDescription}</TableBodyCell>
-        <TableBodyCell><a href="/{item?.groupId}">{item?.groupName}</a></TableBodyCell>
+        <TableBodyCell><a href="/groups/{item?.groupId}">{item?.groupName}</a></TableBodyCell>
         <TableBodyCell>
           <SeverityBadge severity={item?.alertSeverity}/>
         </TableBodyCell>

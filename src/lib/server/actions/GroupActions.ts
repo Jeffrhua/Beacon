@@ -1,6 +1,6 @@
 import { ObjectId, Double } from 'mongodb';
 import { client } from "$lib/server/auth";
-import { addGroupMember, removeGroupMember } from "$lib/server/mongodb";
+import { addGroupMember, removeGroupMember, createGroup } from "$lib/server/mongodb";
 
 export const GroupActions = {
     sendAlert: async ({ request, params, locals }) => {
@@ -46,5 +46,15 @@ export const GroupActions = {
     },
     leaveGroup: async ({ params, locals }) => {
         await removeGroupMember(new ObjectId(locals.user.id), new ObjectId(params.id))
+    },
+    groupCreate: async ({ request, locals }) => {
+        const form = await request.formData();
+        const user = locals.user;
+        const userId = user.id;
+
+        const title = form.get("title")?.toString().trim();
+        const description = form.get("description")?.toString().trim() ?? "";  
+        
+        await createGroup(new ObjectId(userId), title, description)
     }
 }

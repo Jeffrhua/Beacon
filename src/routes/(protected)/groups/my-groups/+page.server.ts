@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { getUserGroups } from "$lib/server/mongodb";
-import type { Group, GroupDb, User, UserDb } from "$lib/types.js";
+import type { Group, GroupDb } from "$lib/types.js";
+import { GroupActions } from "$lib/server/actions/GroupActions";
 
 
 export const load = async ({locals}) => {
@@ -26,3 +27,5 @@ export const load = async ({locals}) => {
 
     return {groups: serialized}
 }
+
+export const actions = GroupActions;

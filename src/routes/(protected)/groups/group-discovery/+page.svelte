@@ -1,10 +1,13 @@
 <script>
     import { page } from "$app/state";;
-    import { Search, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Pagination } from "flowbite-svelte";
+    import { Search, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, PaginationNav, group } from "flowbite-svelte";
 
     let { data } = $props()
 
     let searchTerm = $state("");
+
+    let currentPage = $state(1);
+    let pageSize = $state(10);
 
     let filteredGroups = $derived(
         searchTerm.trim() === ""
@@ -13,6 +16,27 @@
             group.title.toLowerCase().includes(searchTerm.toLowerCase())
         )
     );
+
+    let totalPages = $derived(Math.max(1, Math.ceil(filteredGroups.length / pageSize)));
+
+    $effect(() => {
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+    });
+    
+    $effect(() => {
+        currentPage = 1;
+    })
+
+    let startPage = $derived((currentPage - 1) * pageSize);
+    let endPage = $derived(startPage + pageSize);
+
+    let pagedGroups = $derived(filteredGroups.slice(startPage, endPage));
+
+    function handlePageChange(newPage) {
+        currentPage = newPage;
+    }
 
 </script>
 
@@ -28,15 +52,29 @@
 			<TableHeadCell>Description</TableHeadCell>
 		</TableHead>
 		<TableBody>
-			{#each filteredGroups as group (group.id)}
+			{#each pagedGroups as group (group.id)}
 				<TableBodyRow>
 					<TableBodyCell><a class="text-[#a1bfff]" title="{group.title}" href="/groups/{group.id}">{group.title}</a></TableBodyCell>
 					<TableBodyCell>{group.description}</TableBodyCell>
 				</TableBodyRow>
 			{/each}
+            {#if pagedGroups.length % 10 !== 0}
+                {#each Array(10 - (pagedGroups.length % 10)) as _}
+                    <TableBodyRow>
+                        <TableBodyCell>&nbsp;</TableBodyCell>
+                        <TableBodyCell>&nbsp;</TableBodyCell>
+                    </TableBodyRow>
+                {/each}
+            {/if}
 		</TableBody>
 	</Table>
 
+
+    <PaginationNav
+    {currentPage}
+    {totalPages}
+    visiblePages={5}
+    onPageChange={handlePageChange}/>
 </div>
 
 

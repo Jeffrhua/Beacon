@@ -1,6 +1,8 @@
 <script>
-    import JoinGroupBtn from "$lib/components/JoinGroupBtn.svelte";
-    import { Search, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, PaginationNav, group } from "flowbite-svelte";
+    import CreateGroupModal from "$lib/components/CreateGroupModal.svelte";
+    import { Button, Search, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, PaginationNav, } from "flowbite-svelte";
+
+    let showCreateGroupModal = $state(false);
 
     let { data } = $props()
 
@@ -44,7 +46,10 @@
     <div class="flex justify-between items-center mb-6 gap-4">
         <h1 class="text-2xl font-bold">Group Discovery</h1>
         <div class ="flex items-center gap-3">
-            <span class="flex-none"><JoinGroupBtn/></span>
+            <span class="flex-none">
+                <Button onclick={() => showCreateGroupModal = true}>Create Group</Button>
+                <CreateGroupModal bind:formModal={showCreateGroupModal}/>
+            </span>
             <Search size="md" placeholder="Search Groups" class="max-w-md" bind:value={searchTerm}/>
         </div> 
     </div>

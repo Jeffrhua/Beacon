@@ -1,5 +1,5 @@
 <script>
-    import { page } from "$app/state";;
+    import JoinGroupBtn from "$lib/components/JoinGroupBtn.svelte";
     import { Search, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, PaginationNav, group } from "flowbite-svelte";
 
     let { data } = $props()
@@ -43,7 +43,10 @@
 <div class="p-5">
     <div class="flex justify-between items-center mb-6 gap-4">
         <h1 class="text-2xl font-bold">Group Discovery</h1>
-        <Search size="md" placeholder="Search Groups" class="max-w-md" bind:value={searchTerm}/>
+        <div class ="flex items-center gap-3">
+            <span class="flex-none"><JoinGroupBtn/></span>
+            <Search size="md" placeholder="Search Groups" class="max-w-md" bind:value={searchTerm}/>
+        </div> 
     </div>
     
 	<Table striped = {true} hoverable = {true} color="gray" border={false}>

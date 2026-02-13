@@ -1,0 +1,365 @@
+:root {
+  /* Emergency Alert Dark Theme */
+  --color-black: #000000;
+  --color-dark-bg: #0d0d0d;
+  --color-charcoal: #1a1a1a;
+  --color-dark-gray: #262626;
+  
+  /* Alert Colors - Red & Orange */
+  --color-alert-red: #dc2626;
+  --color-danger-red: #b91c1c;
+  --color-deep-red: #7f1d1d;
+  --color-warning-orange: #ea580c;
+  --color-alert-yellow: #fbbf24;
+  
+  /* Emergency Gradient - Dark with red alert glow */
+  --gradient-background: linear-gradient(
+    135deg, 
+    #0d0d0d 0%,      /* Pure dark */
+    #1a1a1a 30%,     /* Charcoal */
+    #1a0f0f 60%,     /* Dark red tint */
+    #2d1414 90%,     /* Deep crimson shadow */
+    #1a0a0a 100%     /* Dark red-black */
+  );
+  
+  /* Text - WHITE/Light for dark theme */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e5e5e5;
+  --color-text-muted: #a3a3a3;
+  
+  /* Headings - Bright alert red */
+  --color-heading-primary: #ff4444;
+  --color-heading-secondary: #dc2626;
+  
+  /* UI Elements - Emergency red */
+  --color-line: #dc2626;
+  --color-border: #b91c1c;
+  --color-border-glow: #ff4444;
+  
+  /* Input boxes - Dark with red border */
+  --color-input-bg: #1a1a1a;
+  --color-input-text: #ffffff;
+  --color-input-border: #dc2626;
+  
+  /* Buttons - Alert red */
+  --color-button-bg: #dc2626;
+  --color-button-hover: #ff4444;
+  --color-button-text: #ffffff;
+  
+  /* Hover - Red glow */
+  --gradient-hover: linear-gradient(135deg, #dc2626 0%, #ff4444 50%, #ff6b6b 100%);
+  
+  /* Cards - Dark translucent */
+  --color-card-bg: rgba(26, 26, 26, 0.9);
+  --color-card-border: #dc2626;
+  
+  /* Sidebar - Dark background */
+  --color-sidebar-bg: #0d0d0d;
+  --color-sidebar-item-hover: rgba(220, 38, 38, 0.2);
+  
+  /* Status colors */
+  --color-critical: #dc2626;
+  --color-high: #ea580c;
+  --color-medium: #fbbf24;
+  --color-low: #22c55e;
+}
+
+/* Dark emergency gradient */
+body {
+  background: var(--gradient-background);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  min-height: 100vh;
+}
+
+html {
+  background: var(--gradient-background);
+  background-attachment: fixed;
+}
+
+/* Force everything to have proper background */
+* {
+  box-sizing: border-box;
+}
+
+main, .app, div, section, aside, nav {
+  background-color: transparent;
+}
+
+/* Headings - Alert red */
+h1 {
+  color: var(--color-heading-primary);
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+}
+
+h2 {
+  color: var(--color-heading-secondary);
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
+}
+
+h3, h4, h5, h6 {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+/* Text - WHITE for dark theme */
+p, span, label, li, div, a {
+  color: var(--color-text-primary);
+}
+
+/* Lines - Red alert glow */
+hr {
+  border: none;
+  border-top: 2px solid var(--color-line);
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+}
+
+/* Tables - Dark emergency theme */
+table {
+  background-color: var(--color-card-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+}
+
+th {
+  background-color: var(--color-danger-red);
+  color: #ffffff;
+  font-weight: 700;
+  padding: 14px;
+  border-bottom: 2px solid var(--color-border-glow);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+td {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  padding: 12px;
+  border-bottom: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+tr:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+  box-shadow: inset 0 0 10px rgba(220, 38, 38, 0.2);
+}
+
+/* Input boxes - Dark with red accent */
+input, 
+textarea, 
+select {
+  background-color: var(--color-input-bg) !important;
+  border: 2px solid var(--color-input-border);
+  color: var(--color-input-text) !important;
+  padding: 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #737373 !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-border-glow);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2), 0 0 15px rgba(255, 68, 68, 0.3);
+}
+
+/* Fix search bar overlapping */
+input[type="search"],
+input[placeholder*="Search"],
+input[placeholder*="search"],
+input[placeholder*="Alert"] {
+  background-color: var(--color-input-bg) !important;
+  border: 2px solid var(--color-input-border);
+  color: var(--color-input-text) !important;
+  padding: 12px 16px 12px 40px; /* Extra left padding for search icon */
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 500px; /* Prevent it from being too wide */
+  margin: 16px 0; /* Add vertical spacing */
+}
+
+/* Buttons - Emergency alert style */
+button {
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text) !important;
+  border: 2px solid var(--color-button-bg);
+  padding: 12px 24px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+}
+
+button:hover {
+  background: var(--gradient-hover);
+  border-color: var(--color-border-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(255, 68, 68, 0.6);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Links - WHITE text with red on hover */
+a {
+  color: var(--color-text-primary) !important;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+a:hover {
+  color: var(--color-heading-primary) !important;
+  text-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+}
+
+/* Cards - Dark with red glow */
+.card, 
+.container {
+  background-color: var(--color-card-bg);
+  border: 2px solid var(--color-card-border);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 0 25px rgba(220, 38, 38, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.card:hover,
+.container:hover {
+  box-shadow: 0 0 35px rgba(220, 38, 38, 0.4);
+  border-color: var(--color-border-glow);
+  transition: all 0.3s ease;
+}
+
+/* SIDEBAR - Force dark background */
+aside,
+.sidebar,
+nav,
+[class*="sidebar"],
+[class*="nav"] {
+  background-color: var(--color-sidebar-bg) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Fix sidebar icon spacing - Icons closer to text */
+nav a,
+nav button,
+.sidebar-item,
+aside a,
+aside button {
+  color: var(--color-text-primary) !important;
+  transition: all 0.3s ease;
+  padding: 12px 16px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text - adjust this value to make closer/farther */
+}
+
+nav a:hover,
+nav button:hover,
+.sidebar-item:hover,
+aside a:hover,
+aside button:hover {
+  background-color: var(--color-sidebar-item-hover) !important;
+  color: var(--color-heading-primary) !important;
+  box-shadow: inset 0 0 15px rgba(220, 38, 38, 0.3);
+}
+
+/* Active states - Emergency highlight */
+.active,
+[aria-current="page"],
+.sidebar-item.active,
+nav a.active {
+  background-color: rgba(220, 38, 38, 0.3) !important;
+  color: var(--color-heading-primary) !important;
+  font-weight: 700;
+  border-left: 4px solid var(--color-border-glow);
+  box-shadow: inset 0 0 20px rgba(220, 38, 38, 0.2);
+}
+
+/* Icon sizing and positioning */
+nav svg,
+nav .icon,
+aside svg,
+aside .icon,
+nav i,
+aside i {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--color-text-primary);
+  fill: var(--color-text-primary);
+}
+
+/* Icons in general */
+svg, 
+.icon,
+i {
+  color: var(--color-text-primary);
+  fill: var(--color-text-primary);
+}
+
+/* Search wrapper */
+.search-wrapper,
+[class*="search"] {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Alert severity badges */
+.severity-critical {
+  background-color: var(--color-critical);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
+}
+
+.severity-high {
+  background-color: var(--color-high);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.severity-medium {
+  background-color: var(--color-medium);
+  color: black;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.severity-low {
+  background-color: var(--color-low);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+/* Override any light backgrounds */
+.bg-white,
+.bg-light,
+[class*="bg-"] {
+  background-color: transparent !important;
+}

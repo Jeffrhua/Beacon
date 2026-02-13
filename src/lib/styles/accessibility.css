@@ -1,16 +1,35 @@
 /* accessibility.css */
 
+/* Import Dyslexia-Friendly Font */
+@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap');
+
 /* ============================================
-   DARK MODE STYLES
+   DARK MODE STYLES (Emergency Alert Theme)
    ============================================ */
 
 :root[data-theme="dark"] {
-  background-color: #1a1a1a;
+  background: linear-gradient(
+    135deg, 
+    #0d0d0d 0%,
+    #1a1a1a 30%,
+    #1a0f0f 60%,
+    #2d1414 90%,
+    #1a0a0a 100%
+  );
+  background-attachment: fixed;
   color: #ffffff;
 }
 
 :root[data-theme="dark"] body {
-  background-color: #1a1a1a;
+  background: linear-gradient(
+    135deg, 
+    #0d0d0d 0%,
+    #1a1a1a 30%,
+    #1a0f0f 60%,
+    #2d1414 90%,
+    #1a0a0a 100%
+  );
+  background-attachment: fixed;
   color: #ffffff;
 }
 
@@ -19,39 +38,257 @@
 }
 
 :root[data-theme="dark"] .border-gray-200 {
-  border-color: #374151 !important;
+  border-color: #dc2626 !important;
 }
 
 :root[data-theme="dark"] .bg-gray-50 {
-  background-color: #2d2d2d !important;
+  background-color: rgba(26, 26, 26, 0.9) !important;
 }
 
 :root[data-theme="dark"] .hover\:bg-gray-50:hover {
-  background-color: #374151 !important;
+  background-color: rgba(220, 38, 38, 0.2) !important;
 }
 
 :root[data-theme="dark"] .text-gray-600 {
-  color: #9ca3af !important;
+  color: #e5e5e5 !important;
 }
 
 :root[data-theme="dark"] input,
-:root[data-theme="dark"] textarea {
-  background-color: #374151;
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+  background-color: #1a1a1a !important;
   color: #ffffff !important;
-  border-color: #4b5563;
+  border: 2px solid #dc2626 !important;
 }
 
-:root[data-theme="dark"] h1,
-:root[data-theme="dark"] h2,
+:root[data-theme="dark"] input:focus,
+:root[data-theme="dark"] textarea:focus,
+:root[data-theme="dark"] select:focus {
+  border-color: #ff4444 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2), 0 0 15px rgba(255, 68, 68, 0.3) !important;
+}
+
+:root[data-theme="dark"] h1 {
+  color: #ff4444 !important;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+}
+
+:root[data-theme="dark"] h2 {
+  color: #dc2626 !important;
+  text-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
+}
+
 :root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,
+:root[data-theme="dark"] h5,
+:root[data-theme="dark"] h6 {
+  color: #e5e5e5 !important;
+}
+
 :root[data-theme="dark"] p,
 :root[data-theme="dark"] span,
 :root[data-theme="dark"] label {
   color: #ffffff !important;
 }
 
+:root[data-theme="dark"] button {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  border: 2px solid #dc2626 !important;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+}
+
+:root[data-theme="dark"] button:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #ff4444 50%, #ff6b6b 100%) !important;
+  border-color: #ff4444 !important;
+  box-shadow: 0 0 30px rgba(255, 68, 68, 0.6) !important;
+}
+
 :root[data-theme="dark"] label.rounded:hover {
-  background-color: #374151 !important;
+  background-color: rgba(220, 38, 38, 0.2) !important;
+}
+
+:root[data-theme="dark"] a {
+  color: #ffffff !important;
+}
+
+:root[data-theme="dark"] a:hover {
+  color: #ff4444 !important;
+  text-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+}
+
+:root[data-theme="dark"] table {
+  background-color: rgba(26, 26, 26, 0.9) !important;
+  border: 2px solid #b91c1c !important;
+}
+
+:root[data-theme="dark"] th {
+  background-color: #b91c1c !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid #ff4444 !important;
+}
+
+:root[data-theme="dark"] td {
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(220, 38, 38, 0.2) !important;
+}
+
+:root[data-theme="dark"] tr:hover {
+  background-color: rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Sidebar dark mode */
+:root[data-theme="dark"] aside,
+:root[data-theme="dark"] nav,
+:root[data-theme="dark"] .sidebar {
+  background-color: #0d0d0d !important;
+}
+
+:root[data-theme="dark"] nav a,
+:root[data-theme="dark"] .sidebar-item {
+  color: #ffffff !important;
+}
+
+:root[data-theme="dark"] nav a:hover,
+:root[data-theme="dark"] .sidebar-item:hover {
+  background-color: rgba(220, 38, 38, 0.2) !important;
+  color: #ff4444 !important;
+}
+
+/* ============================================
+   FOCUS INDICATORS
+   ============================================ */
+
+:root[data-focus-indicators="enabled"] *:focus {
+  outline: 3px solid #fbbf24 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.3) !important;
+}
+
+:root[data-focus-indicators="enabled"] button:focus {
+  outline: 3px solid #fbbf24 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.3) !important;
+}
+
+:root[data-focus-indicators="enabled"] a:focus {
+  outline: 3px solid #fbbf24 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.3) !important;
+}
+
+:root[data-focus-indicators="enabled"] input:focus,
+:root[data-focus-indicators="enabled"] textarea:focus,
+:root[data-focus-indicators="enabled"] select:focus {
+  outline: 3px solid #fbbf24 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.3) !important;
+}
+
+/* Dark mode focus indicators */
+:root[data-theme="dark"][data-focus-indicators="enabled"] *:focus {
+  outline: 3px solid #fbbf24 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.4), 0 0 15px rgba(251, 191, 36, 0.6) !important;
+}
+
+:root[data-theme="dark"][data-focus-indicators="enabled"] button:focus {
+  outline: 3px solid #fbbf24 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.4), 0 0 15px rgba(251, 191, 36, 0.6) !important;
+}
+
+:root[data-theme="dark"][data-focus-indicators="enabled"] a:focus {
+  outline: 3px solid #fbbf24 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.4), 0 0 15px rgba(251, 191, 36, 0.6) !important;
+}
+
+:root[data-theme="dark"][data-focus-indicators="enabled"] input:focus,
+:root[data-theme="dark"][data-focus-indicators="enabled"] textarea:focus,
+:root[data-theme="dark"][data-focus-indicators="enabled"] select:focus {
+  outline: 3px solid #fbbf24 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.4), 0 0 15px rgba(251, 191, 36, 0.6) !important;
+}
+
+/* ============================================
+   DYSLEXIA-FRIENDLY FONT
+   ============================================ */
+
+:root[data-dyslexia-font="enabled"] {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+}
+
+:root[data-dyslexia-font="enabled"] * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+  line-height: 1.8 !important;
+}
+
+:root[data-dyslexia-font="enabled"] h1,
+:root[data-dyslexia-font="enabled"] h2,
+:root[data-dyslexia-font="enabled"] h3,
+:root[data-dyslexia-font="enabled"] h4,
+:root[data-dyslexia-font="enabled"] h5,
+:root[data-dyslexia-font="enabled"] h6 {
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+}
+
+:root[data-dyslexia-font="enabled"] p,
+:root[data-dyslexia-font="enabled"] li,
+:root[data-dyslexia-font="enabled"] span {
+  line-height: 2 !important;
+}
+
+/* ============================================
+   TEXT-TO-SPEECH
+   ============================================ */
+
+:root[data-text-to-speech="enabled"] p,
+:root[data-text-to-speech="enabled"] h1,
+:root[data-text-to-speech="enabled"] h2,
+:root[data-text-to-speech="enabled"] h3,
+:root[data-text-to-speech="enabled"] h4,
+:root[data-text-to-speech="enabled"] h5,
+:root[data-text-to-speech="enabled"] h6,
+:root[data-text-to-speech="enabled"] label,
+:root[data-text-to-speech="enabled"] button,
+:root[data-text-to-speech="enabled"] a,
+:root[data-text-to-speech="enabled"] span,
+:root[data-text-to-speech="enabled"] li {
+  cursor: pointer;
+  position: relative;
+}
+
+:root[data-text-to-speech="enabled"] p:hover::after,
+:root[data-text-to-speech="enabled"] h1:hover::after,
+:root[data-text-to-speech="enabled"] h2:hover::after,
+:root[data-text-to-speech="enabled"] h3:hover::after,
+:root[data-text-to-speech="enabled"] label:hover::after,
+:root[data-text-to-speech="enabled"] button:hover::after,
+:root[data-text-to-speech="enabled"] a:hover::after {
+  content: "🔊";
+  position: absolute;
+  right: -25px;
+  top: 0;
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+/* Dark mode text-to-speech */
+:root[data-theme="dark"][data-text-to-speech="enabled"] p:hover,
+:root[data-theme="dark"][data-text-to-speech="enabled"] h1:hover,
+:root[data-theme="dark"][data-text-to-speech="enabled"] h2:hover,
+:root[data-theme="dark"][data-text-to-speech="enabled"] h3:hover,
+:root[data-theme="dark"][data-text-to-speech="enabled"] label:hover,
+:root[data-theme="dark"][data-text-to-speech="enabled"] button:hover,
+:root[data-theme="dark"][data-text-to-speech="enabled"] a:hover {
+  background-color: rgba(251, 191, 36, 0.1);
+  border-radius: 4px;
+  padding: 2px 4px;
 }
 
 /* ============================================
@@ -95,7 +332,8 @@
 }
 
 :root[data-contrast="high"] input,
-:root[data-contrast="high"] textarea {
+:root[data-contrast="high"] textarea,
+:root[data-contrast="high"] select {
   background-color: #FFFFFF !important;
   color: #000000 !important;
   font-weight: 600 !important;
@@ -115,8 +353,12 @@
 }
 
 /* ============================================
-   HIGH CONTRAST MODE - DARK MODE
+   HIGH CONTRAST MODE - DARK MODE (Emergency Theme)
    ============================================ */
+
+:root[data-theme="dark"][data-contrast="high"] {
+  background: #000000 !important;
+}
 
 :root[data-theme="dark"][data-contrast="high"] * {
   color: #FFFFFF !important;
@@ -136,21 +378,74 @@
 :root[data-theme="dark"][data-contrast="high"] .border-gray-200,
 :root[data-theme="dark"][data-contrast="high"] input,
 :root[data-theme="dark"][data-contrast="high"] textarea,
+:root[data-theme="dark"][data-contrast="high"] select,
 :root[data-theme="dark"][data-contrast="high"] button {
-  border: 3px solid #FFFFFF !important;
+  border: 3px solid #FF0000 !important;
 }
 
 :root[data-theme="dark"][data-contrast="high"] button {
-  background-color: #FFFFFF !important;
-  color: #000000 !important;
+  background-color: #FF0000 !important;
+  color: #FFFFFF !important;
+  font-weight: bold !important;
 }
 
 :root[data-theme="dark"][data-contrast="high"] input,
-:root[data-theme="dark"][data-contrast="high"] textarea {
+:root[data-theme="dark"][data-contrast="high"] textarea,
+:root[data-theme="dark"][data-contrast="high"] select {
   background-color: #000000 !important;
   color: #FFFFFF !important;
+  border-color: #FF0000 !important;
 }
 
 :root[data-theme="dark"][data-contrast="high"] a {
-  color: #00FFFF !important;
+  color: #FF0000 !important;
+  text-decoration: underline !important;
+  font-weight: bold !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] h1 {
+  color: #FF0000 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+}
+
+:root[data-theme="dark"][data-contrast="high"] h2,
+:root[data-theme="dark"][data-contrast="high"] h3 {
+  color: #FFFFFF !important;
+  font-weight: 900 !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] table {
+  border: 3px solid #FF0000 !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] th {
+  background-color: #FF0000 !important;
+  color: #FFFFFF !important;
+  border: 3px solid #FFFFFF !important;
+}
+
+:root[data-theme="dark"][data-contrast="high"] td {
+  border: 2px solid #FF0000 !important;
+}
+
+/* ============================================
+   COMBINED MODES
+   ============================================ */
+
+/* Focus Indicators + High Contrast */
+:root[data-focus-indicators="enabled"][data-contrast="high"] *:focus {
+  outline: 4px solid #000000 !important;
+  outline-offset: 4px !important;
+}
+
+:root[data-theme="dark"][data-focus-indicators="enabled"][data-contrast="high"] *:focus {
+  outline: 4px solid #FFFF00 !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 8px rgba(255, 255, 0, 0.5) !important;
+}
+
+/* Dyslexia Font + Dark Mode */
+:root[data-theme="dark"][data-dyslexia-font="enabled"] * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
 }

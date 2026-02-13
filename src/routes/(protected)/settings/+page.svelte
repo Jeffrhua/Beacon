@@ -14,15 +14,32 @@
   let fontSize = $state<'small' | 'medium' | 'large' | 'xlarge'>('medium');
   let themeBtn = $state("light");
   let highContrast = $state<boolean>(false);
+  let focusIndicators = $state<boolean>(true);
+  let dyslexiaFont = $state<boolean>(false);
+  let textToSpeech = $state<boolean>(false);
+
+  let speechSynthesis: SpeechSynthesis | null = null;
+  let isReading = $state(false);
 
   onMount(() => {
     fontSize = (localStorage.getItem('fontSize') as any) || 'medium';
     highContrast = localStorage.getItem('highContrast') === 'true';
+    focusIndicators = localStorage.getItem('focusIndicators') !== 'false';
+    dyslexiaFont = localStorage.getItem('dyslexiaFont') === 'true';
+    textToSpeech = localStorage.getItem('textToSpeech') === 'true';
     themeBtn = $theme
     
     applyFontSize();
     applyTheme();
     applyHighContrast();
+    applyFocusIndicators();
+    applyDyslexiaFont();
+    applyTextToSpeech();
+
+    // Initialize speech synthesis
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      speechSynthesis = window.speechSynthesis;
+    }
   });
 
   function applyFontSize() {
@@ -47,6 +64,87 @@
       document.documentElement.removeAttribute('data-contrast');
     }
     localStorage.setItem('highContrast', highContrast.toString());
+  }
+
+  function applyFocusIndicators() {
+    if (focusIndicators) {
+      document.documentElement.setAttribute('data-focus-indicators', 'enabled');
+    } else {
+      document.documentElement.removeAttribute('data-focus-indicators');
+    }
+    localStorage.setItem('focusIndicators', focusIndicators.toString());
+  }
+
+  function applyDyslexiaFont() {
+    if (dyslexiaFont) {
+      document.documentElement.setAttribute('data-dyslexia-font', 'enabled');
+    } else {
+      document.documentElement.removeAttribute('data-dyslexia-font');
+    }
+    localStorage.setItem('dyslexiaFont', dyslexiaFont.toString());
+  }
+
+  function applyTextToSpeech() {
+    if (textToSpeech) {
+      document.documentElement.setAttribute('data-text-to-speech', 'enabled');
+      enableTextToSpeech();
+    } else {
+      document.documentElement.removeAttribute('data-text-to-speech');
+      disableTextToSpeech();
+    }
+    localStorage.setItem('textToSpeech', textToSpeech.toString());
+  }
+
+  function enableTextToSpeech() {
+    if (typeof window === 'undefined') return;
+    
+    // Add click listeners to all text elements
+    document.addEventListener('click', handleTextClick);
+  }
+
+  function disableTextToSpeech() {
+    if (typeof window === 'undefined') return;
+    
+    document.removeEventListener('click', handleTextClick);
+    
+    // Stop any ongoing speech
+    if (speechSynthesis) {
+      speechSynthesis.cancel();
+      isReading = false;
+    }
+  }
+
+  function handleTextClick(event: MouseEvent) {
+    if (!textToSpeech || !speechSynthesis) return;
+    
+    const target = event.target as HTMLElement;
+    
+    // Only read text from paragraphs, headings, labels, buttons, and links
+    if (target.matches('p, h1, h2, h3, h4, h5, h6, label, button, a, span, li')) {
+      const text = target.textContent?.trim();
+      
+      if (text) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+        
+        // Create and speak new utterance
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9; // Slightly slower for better comprehension
+        utterance.pitch = 1.0;
+        
+        utterance.onstart = () => {
+          isReading = true;
+          target.style.backgroundColor = 'rgba(251, 191, 36, 0.3)';
+        };
+        
+        utterance.onend = () => {
+          isReading = false;
+          target.style.backgroundColor = '';
+        };
+        
+        speechSynthesis.speak(utterance);
+      }
+    }
   }
 
   async function handleSignOut(){
@@ -88,7 +186,7 @@
           <InfoCircleSolid class="shrink-0 h-6 w-6" />
         {/snippet}
       </SidebarItem>
-            <SidebarItem label="Logout" onclick={handleSignOut} class="cursor-pointer">
+      <SidebarItem label="Logout" onclick={handleSignOut} class="cursor-pointer">
         {#snippet icon()}
           <CloseCircleSolid class="shrink-0 h-6 w-6" />
         {/snippet}
@@ -145,37 +243,60 @@
           </div>
         </div>
         
-        <!-- Theme -->
+        <!-- Focus Indicators -->
         <div>
-          <h2 class="text-xl font-semibold mb-4">Theme</h2>
-          <p class="text-gray-600 mb-4">Choose between light and dark mode</p>
-          <div class="space-y-2">
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
-              <input type="radio" bind:group={themeBtn} value="light" onchange={applyTheme} class="w-4 h-4" />
-              <span>Light Mode</span>
-            </Label>
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
-              <input type="radio" bind:group={themeBtn} value="dark" onchange={applyTheme} class="w-4 h-4" />
-              <span>Dark Mode</span>
-            </Label>
-          </div>
-        </div>
-        
-        <!-- High Contrast -->
-        <div>
-          <h2 class="text-xl font-semibold mb-4">UI Contrast</h2>
-          <p class="text-gray-600 mb-4">Increase color contrast for better visibility</p>
+          <h2 class="text-xl font-semibold mb-4">Focus Indicators</h2>
+          <p class="text-gray-600 mb-4">Enhanced visual indicators when navigating with keyboard</p>
           <div class="space-y-2">
             <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
               <input 
                 type="checkbox" 
-                bind:checked={highContrast} 
-                onchange={applyHighContrast}
+                bind:checked={focusIndicators} 
+                onchange={applyFocusIndicators}
                 class="w-4 h-4"
               />
-              <span>Enable High Contrast Mode</span>
+              <span>Enable Enhanced Focus Indicators</span>
             </Label>
-            <p class="text-sm text-gray-500 ml-7">Makes text darker and borders more visible for easier reading</p>
+            <p class="text-sm text-gray-500 ml-7">Shows clear outlines around buttons and links when using Tab key</p>
+          </div>
+        </div>
+
+        <!-- Dyslexia-Friendly Font -->
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Dyslexia-Friendly Font</h2>
+          <p class="text-gray-600 mb-4">Switch to a font designed for easier reading</p>
+          <div class="space-y-2">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+              <input 
+                type="checkbox" 
+                bind:checked={dyslexiaFont} 
+                onchange={applyDyslexiaFont}
+                class="w-4 h-4"
+              />
+              <span>Enable Dyslexia-Friendly Font</span>
+            </Label>
+            <p class="text-sm text-gray-500 ml-7">Uses OpenDyslexic font with weighted bottoms to help prevent confusion</p>
+          </div>
+        </div>
+
+        <!-- Text-to-Speech -->
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Text-to-Speech</h2>
+          <p class="text-gray-600 mb-4">Click on any text to hear it read aloud</p>
+          <div class="space-y-2">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+              <input 
+                type="checkbox" 
+                bind:checked={textToSpeech} 
+                onchange={applyTextToSpeech}
+                class="w-4 h-4"
+              />
+              <span>Enable Text-to-Speech</span>
+            </Label>
+            <p class="text-sm text-gray-500 ml-7">Click on headings, paragraphs, or buttons to have them read aloud</p>
+            {#if isReading}
+              <p class="text-sm text-green-600 ml-7 font-semibold">🔊 Reading...</p>
+            {/if}
           </div>
         </div>
       </div>

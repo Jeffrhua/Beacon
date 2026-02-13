@@ -222,6 +222,7 @@ export async function removeGroupMember(userId: ObjectId, groupId: ObjectId) {
   }
 }
 
+// Get alerts from a group
 export async function getGroupAlerts(groupId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
@@ -240,4 +241,62 @@ export async function getGroupAlerts(groupId: ObjectId){
     alertsDb.map((a) => alertDbToAlert(a))
   )
   return alerts;
+}
+
+// Creates a group
+export async function createGroup(ownerId: ObjectId, title: String, description: String){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  try {
+    const result = await mainDb.collection("group").insertOne({
+      "title": title,
+      "description": description,
+      "owner_id": ownerId
+    })
+
+    const newGroupId = result.insertedId;
+
+    if (newGroupId){
+      await mainDb.collection("user_group").insertOne({
+        "user_id": ownerId,
+        "group_id": newGroupId,
+        "user_role": "owner"
+      })
+    }
+
+    return newGroupId.toString();
+
+  }
+  catch (error) {
+    console.error("Error:", error)
+  }
+
+  return null;
+}
+
+// Delete group
+export async function deleteGroup(userId: ObjectId, groupId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  const group = await getGroup(groupId);
+
+  // Only proceed if current user is the owner
+  if (group?.owner_id.equals(userId)){
+    try {
+      await mainDb.collection("group").deleteOne({
+        "group_id": groupId
+      })
+
+      await mainDb.collection("user_group").deleteMany({
+        "group_id": groupId
+      })
+    }
+    catch (error) {
+      console.error("Error:", error)
+    }
+  }
 }

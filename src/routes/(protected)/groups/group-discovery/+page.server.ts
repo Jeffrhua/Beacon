@@ -1,28 +1,21 @@
-import { getAllGroups, createGroup } from "$lib/server/mongodb";
+import { getAllGroups, createGroup, getMemberCount } from "$lib/server/mongodb";
 import type { Group, GroupDb } from "$lib/types.js";
 import type { Actions } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
 import { ObjectId } from "mongodb";
 
-function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-const length = randomInt(50, 100);
-
-const testGroupsDb = Array.from({ length }, (_, i) => ({
-  _id: new ObjectId(),
-  title: `Test Group ${i + 1}`,
-  description: `Test description for group ${i + 1}`,
-  owner_id: new ObjectId()
-}));
-
 export const load = async () => {
     const groups : GroupDb[] = await getAllGroups();
-    //const groups = testGroupsDb; // For testing purposes only
+    const memberCounts = await getMemberCount();
+
+    const memberCountMap = new Map<string, number>(
+      memberCounts.map(mc => [mc._id.toString(), mc.count])
+    );
+
     const serialized: Group[] = groups.map(({_id, owner_id, ...r}) =>({
         id: _id.toString(), 
         owner_id: owner_id.toString(),
+        memberCount: memberCountMap.get(_id.toString()) ?? 0,
         ...r
     }))
 

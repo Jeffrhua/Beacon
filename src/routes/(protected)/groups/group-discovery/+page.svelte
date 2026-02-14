@@ -1,13 +1,11 @@
 <script>
     import CreateGroupModal from "$lib/components/CreateGroupModal.svelte";
+    import {UserOutline} from "flowbite-svelte-icons";
     import { Button, Search, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, PaginationNav, } from "flowbite-svelte";
 
     let showCreateGroupModal = $state(false);
-
     let { data } = $props()
-
     let searchTerm = $state("");
-
     let currentPage = $state(1);
     let pageSize = $state(10);
 
@@ -58,17 +56,25 @@
 		<TableHead>
 			<TableHeadCell>Title</TableHeadCell>
 			<TableHeadCell>Description</TableHeadCell>
+            <TableHeadCell></TableHeadCell>
 		</TableHead>
 		<TableBody>
 			{#each pagedGroups as group (group.id)}
 				<TableBodyRow>
 					<TableBodyCell><a class="text-[#a1bfff]" title="{group.title}" href="/groups/{group.id}">{group.title}</a></TableBodyCell>
 					<TableBodyCell>{group.description}</TableBodyCell>
+                    <TableBodyCell>
+                        <div class="flex items-center gap-1">
+                            <UserOutline></UserOutline>
+                            <span>{group.memberCount}</span>
+                        </div>
+                    </TableBodyCell>
 				</TableBodyRow>
 			{/each}
             {#if pagedGroups.length % 10 !== 0}
                 {#each Array(10 - (pagedGroups.length % 10)) as _}
                     <TableBodyRow>
+                        <TableBodyCell>&nbsp;</TableBodyCell>
                         <TableBodyCell>&nbsp;</TableBodyCell>
                         <TableBodyCell>&nbsp;</TableBodyCell>
                     </TableBodyRow>

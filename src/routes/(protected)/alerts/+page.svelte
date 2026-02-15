@@ -7,6 +7,7 @@
 	let items = data.userAlerts;
   	let searchTerm = $state("");
 
+  // function to filter items for the sear
 	let filteredItems = $derived.by(() =>
 		items.filter(
 			(item) =>
@@ -17,7 +18,7 @@
 </script>
 
 <div>
-
+  <!-- Create a Table with information about every alert -->
 	<TableSearch placeholder="Search by Alert name" hoverable bind:inputValue={searchTerm}>
   <TableHead>
     <TableHeadCell>Created</TableHeadCell>

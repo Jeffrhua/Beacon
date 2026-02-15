@@ -15,16 +15,19 @@ export async function getUserSettingDb(){
     return db;
 }
 
+// Given an alert, find the group object it came from
 export async function getGroupFromAlert(alertId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
   }
+  // find the alert_group object with the given alertId
   const userAlertId = await mainDb.collection('alert_group').findOne(
     {
       "alert_id": alertId
     }
   )
   if(!userAlertId) return null;
+  // the alert_group object that is found 
   const group = await mainDb.collection('group').findOne(
     {
       "_id": userAlertId.group_id
@@ -39,11 +42,13 @@ export async function getUserGroupIds(userId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
   }
+  // find all the user_group objects
    const userGroups = await mainDb.collection("user_group").find(
     {
       "user_id": userId
     }
   ).toArray();
+  // convert all the group objects to ObjectIds
   const groupIds : ObjectId[] = userGroups.map((g) => g.group_id as ObjectId)
   return groupIds
 }
@@ -79,6 +84,7 @@ export async function getAlert(alertId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
   }
+  // find the alert object from a given alertId
   const alert = await mainDb.collection('alert').findOne(
     {
       "_id": alertId
@@ -98,12 +104,14 @@ export async function getGroupUsers(groupId: ObjectId){
     db = client.db('Beacon');
   }
 
+  // get the user_group object from the given id
   const groupUsers = await mainDb.collection("user_group").find(
     {
       "group_id": groupId
     }
   ).toArray();
 
+  // get all the user_ids from the user_group object
   const userIds : ObjectId[] = groupUsers.map((u) => u.user_id as ObjectId)
   if (userIds.length == 0) return [];
   const users = await db.collection<UserDb>("user").find(
@@ -150,22 +158,26 @@ export async function getAllUserAlerts(userId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
   }
+  // Get all the group id's of the groups the user is in
   const userGroups : ObjectId[] = await getUserGroupIds(userId);
   if(userGroups.length == 0) return [];
+  // find all the alert_group objects that are part of userGroups
   const userAlertIds = await mainDb.collection('alert_group').find(
     {
       "group_id" : {
         "$in":userGroups
       }
     }
-  ).map((ag) => ag.alert_id)
+  ).map((ag) => ag.alert_id) // map them to the id only
   .toArray();
   
+  // convert to alertdb ojbject
   const alerts = await Promise.all(
     userAlertIds.map(id => getAlert(id))
   );
 
   const alertsDb: AlertDb[] = alerts.filter((a): a is AlertDb => a !== null);
+  //convert to alert object
   const userAlerts: Alert[] = alertsDb.map(alertDbToAlert);
 
   return userAlerts
@@ -227,16 +239,19 @@ export async function getGroupAlerts(groupId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
   }
+  // get alert_group objects
   const alert_groups = await mainDb.collection('alert_group').find(
     {
       "group_id": groupId
     }
   ).toArray();
-
+  // convert the alert_group objects to a list of id's
   const alertIds = alert_groups.map((a)=>a.alert_id)
+  // Map each id to an alertdb object
   const alertsDb: AlertDb[] = await Promise.all(
     alertIds.map((a)=>getAlert(a))
   )
+  // map each alertdb object to an alert object
   const alerts: Alert[] = await Promise.all(
     alertsDb.map((a) => alertDbToAlert(a))
   )

@@ -18,6 +18,7 @@
             {title}
         </h1>
     </div>
+    <!-- Notification Button on the top right that shows recent alerts -->
     <div class="px-10">
         <Button outline color="dark"><BellSolid class="shrink-0 h-7 w-7 cursor-pointer dark:text-white"/></Button>
         <Dropdown activeUrl={activeUrl}>

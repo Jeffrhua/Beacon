@@ -316,8 +316,11 @@ export async function deleteGroup(userId: ObjectId, groupId: ObjectId){
   }
 }
 
+//Aggregrate member counts for all groups
 export async function getMemberCount() {
   if (!mainDb) mainDb = client.db('main');
+  
+  //Group by id and count each member
   return await mainDb.collection("user_group").aggregate([
     { $group: { _id: "$group_id", count: { $sum: 1 } } }
   ]).toArray();

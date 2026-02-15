@@ -9,6 +9,7 @@
     let currentPage = $state(1);
     let pageSize = $state(10);
 
+    //Filter groups based on search term
     let filteredGroups = $derived(
         searchTerm.trim() === ""
         ? data.groups
@@ -17,21 +18,26 @@
         )
     );
 
+    // Calculate total pages based on filtered groups
     let totalPages = $derived(Math.max(1, Math.ceil(filteredGroups.length / pageSize)));
 
+    // Ensure current page is within valid range when filtered groups change
     $effect(() => {
         if (currentPage > totalPages) {
             currentPage = totalPages;
         }
     });
     
+    //Reset to first page if the search terms changes
     $effect(() => {
         currentPage = 1;
     })
 
+    //Calculate boundaries
     let startPage = $derived((currentPage - 1) * pageSize);
     let endPage = $derived(startPage + pageSize);
 
+    //Get groups for the current page
     let pagedGroups = $derived(filteredGroups.slice(startPage, endPage));
 
     function handlePageChange(newPage) {

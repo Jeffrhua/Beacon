@@ -23,6 +23,11 @@
 		}}
 		>
 		<SidebarGroup class=" w-full h-full bg-[#F9FAFB] dark:!bg-[#17191C]">
+			<SidebarItem label="Home" href="/">
+				{#snippet icon()}
+					<HomeSolid class="shrink-0 h-6 w-6" />
+				{/snippet}
+			</SidebarItem>
 			<SidebarItem label="Alerts" href="/alerts">
 				{#snippet icon()}
 					<BellSolid class="shrink-0 h-6 w-6" />

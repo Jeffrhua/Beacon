@@ -315,3 +315,10 @@ export async function deleteGroup(userId: ObjectId, groupId: ObjectId){
     }
   }
 }
+
+export async function getMemberCount() {
+  if (!mainDb) mainDb = client.db('main');
+  return await mainDb.collection("user_group").aggregate([
+    { $group: { _id: "$group_id", count: { $sum: 1 } } }
+  ]).toArray();
+}

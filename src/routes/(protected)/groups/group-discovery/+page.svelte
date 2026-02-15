@@ -1,13 +1,15 @@
 <script>
     import CreateGroupModal from "$lib/components/CreateGroupModal.svelte";
     import {UserOutline} from "flowbite-svelte-icons";
-    import { Button, Search, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, PaginationNav, } from "flowbite-svelte";
+    import { Button, Select, Label, Search, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, PaginationNav, } from "flowbite-svelte";
 
     let showCreateGroupModal = $state(false);
     let { data } = $props()
     let searchTerm = $state("");
     let currentPage = $state(1);
     let pageSize = $state(10);
+    let sortOrder = $state("");
+
 
     let filteredGroups = $derived(
         searchTerm.trim() === ""
@@ -17,7 +19,23 @@
         )
     );
 
-    let totalPages = $derived(Math.max(1, Math.ceil(filteredGroups.length / pageSize)));
+    let sortedGroups = $derived(
+        [...filteredGroups].sort((a, b) => {
+        
+            switch(sortOrder) {
+                case "asc":
+                    return a.memberCount - b.memberCount;
+                case "desc":
+                    return b.memberCount - a.memberCount;
+                case "alphabetical":
+                    return a.title.localeCompare(b.title);
+                default:
+                    return 0;
+            }
+        })
+    );
+
+    let totalPages = $derived(Math.max(1, Math.ceil(sortedGroups.length / pageSize)));
 
     $effect(() => {
         if (currentPage > totalPages) {
@@ -32,7 +50,7 @@
     let startPage = $derived((currentPage - 1) * pageSize);
     let endPage = $derived(startPage + pageSize);
 
-    let pagedGroups = $derived(filteredGroups.slice(startPage, endPage));
+    let pagedGroups = $derived(sortedGroups.slice(startPage, endPage));
 
     function handlePageChange(newPage) {
         currentPage = newPage;
@@ -48,8 +66,15 @@
                 <Button onclick={() => showCreateGroupModal = true}>Create Group</Button>
                 <CreateGroupModal bind:formModal={showCreateGroupModal}/>
             </span>
-            <Search size="md" placeholder="Search for Groups" class="max-w-md" bind:value={searchTerm}/>
-        </div> 
+                <Select size="md" class="w-52" placeholder="Sort by..." bind:value={sortOrder} clearable>
+                    <option value="asc">Members (Low - High)</option>
+                    <option value="desc">Members (High - Low)</option>
+                    <option value="alphabetical">A-Z</option>
+                </Select>
+                <div>
+                    <Search size="md" placeholder="Search for Groups" class="w-72" bind:value={searchTerm}/>
+                </div>
+        </div>
     </div>
     <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
         <Table hoverable = {true} border={false} class="w-full text-sm text-left text-gray-500 dark:text-gray-400">

@@ -69,5 +69,13 @@ export const GroupActions = {
             await deleteGroup(new ObjectId(locals.user.id), new ObjectId(params.id))
             throw redirect(303, '/groups');
         }
+    },
+    removeUser: async ({ params, request}) => {
+        const form = await request.formData();
+        const userId = form.get("userId") as string;
+
+        if (userId) {
+            await removeGroupMember(new ObjectId(userId), new ObjectId(params.id))
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { getGroup, getGroupUsers, getUser, checkGroupMembership, getGroupAlerts } from '$lib/server/mongodb.js'
+import { getGroup, getGroupUsers, getUser, checkGroupMembership, checkGroupRole, getGroupAlerts } from '$lib/server/mongodb.js'
 import { ObjectId } from 'mongodb';
 import { GroupActions } from '$lib/server/actions/GroupActions.js';
 
@@ -25,6 +25,7 @@ export const load = async ({params, locals}) => {
     // Check user 
     const user_id = new ObjectId(locals.user?.id)
     const isMember = await checkGroupMembership(user_id, groupId);
+    const isAdmin = await checkGroupRole(user_id, groupId, "admin");
     // Load users in current group
     let users = [];
     groupUsers.forEach((u)=>{
@@ -39,6 +40,7 @@ export const load = async ({params, locals}) => {
         owner: ownerSerialized,
         currentUser: user_id.toString(),
         isMember: isMember,
+        isAdmin: isAdmin,
         alerts: groupAlerts
     }
 }

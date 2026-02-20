@@ -1,19 +1,22 @@
 <script lang="ts">
     import {page} from '$app/state';
-    import {Card, Listgroup, Button} from "flowbite-svelte";
+    import {Card, Listgroup, Button, Group} from "flowbite-svelte";
     import {UserOutline} from "flowbite-svelte-icons";
     import SendAlertModal from '$lib/components/SendAlertModal.svelte';
     import SeverityBadge from '$lib/components/SeverityBadge.svelte';
     import JoinGroupBtn from '$lib/components/JoinGroupBtn.svelte';
     import RemoveGroupBtn from '$lib/components/RemoveGroupBtn.svelte';
     import DeleteGroupBtn from '$lib/components/DeleteGroupBtn.svelte';
+    import GroupSettings from '$lib/components/GroupSettings.svelte';
 
     let { id } = page.params;
     let { data } = $props();
     let formModal = $state(false);
     let deleteGroupForm = $state(false);
+    let settingsModal = $state(false);
     let alerts = data.alerts ? data.alerts : []
     const isOwner = data.owner?.id === data.currentUser;
+    const isAdmin = data.isAdmin;
 
     console.log(data.owner?.id)
 </script>
@@ -51,9 +54,11 @@
                 {#if data.users}
                     <Listgroup items={data.users} class="border-0 dark:bg-transparent">
                         {#snippet children(user)}
-                            <div class = "flex items-center py-2">
-                                <p class="text-sm font-sm text-gray-900 dark:text-white">{user.displayName ? user.displayName : user.name}</p>
-                            </div>
+                            {#if user.id != data.owner?.id}
+                                <div class = "flex items-center py-2">
+                                    <p class="text-sm font-sm text-gray-900 dark:text-white">{user.displayName ? user.displayName : user.name}</p>
+                                </div>
+                            {/if}
                         {/snippet}
                     </Listgroup>
                 {/if}
@@ -88,10 +93,14 @@
             <RemoveGroupBtn></RemoveGroupBtn>
         {/if}
 
-        {#if isOwner}
+        {#if isOwner || isAdmin}
             <Button onclick={() => (formModal = true)}>Send an alert</Button>
             <SendAlertModal bind:formModal></SendAlertModal>
-            
+        {/if}
+
+        {#if isOwner}
+            <Button onclick={() => (settingsModal = true)}>Settings</Button>
+            <GroupSettings bind:settingsModal users={data.users} owner={data.owner}></GroupSettings>
             <Button onclick={() => (deleteGroupForm = true)}>Delete group</Button>
             <DeleteGroupBtn bind:deleteGroupForm></DeleteGroupBtn>
         {/if}

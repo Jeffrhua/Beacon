@@ -3,6 +3,8 @@ import { client } from './auth'
 import type { GroupDb, UserDb, AlertDb, Alert } from '$lib/types';
 import { alertDbToAlert } from '$lib/db-type-conversions';
 
+const GroupRoles = ["owner", "admin", "moderator", "member"]
+
 let db: Db;
 let mainDb: Db;
 export async function getUserSettingDb(){
@@ -80,6 +82,7 @@ export async function getAllGroups(){
   return groups;
 }
 
+// Get alert from id
 export async function getAlert(alertId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
@@ -94,6 +97,7 @@ export async function getAlert(alertId: ObjectId){
   if(!alert) return null;
   return alert;
 }
+
 // Get all users in a group
 export async function getGroupUsers(groupId: ObjectId){
   if(!mainDb){
@@ -197,6 +201,28 @@ export async function checkGroupMembership(userId: ObjectId, groupId: ObjectId){
   );
 
   return (membership != null);
+}
+
+// Check if user is a certain role in a given group
+export async function checkGroupRole(userId: ObjectId, groupId: ObjectId, role: string){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  // Check if the role exists first before searching for it
+  if (!GroupRoles.includes(role)){
+    return null
+  }
+
+
+  const roleMembership = await mainDb.collection("user_group").findOne(
+    {
+      "user_id": userId,
+      "group_id": groupId
+    }
+  )
+
+  return (roleMembership?.user_role == role)
 }
 
 // Add user to group

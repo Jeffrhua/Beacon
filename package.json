@@ -39,6 +39,8 @@
 	},
 	"dependencies": {
 		"better-auth": "^1.4.6",
+		"jspdf": "^4.2.0",
+		"jspdf-autotable": "^5.0.7",
 		"leaflet": "^1.9.4",
 		"mongodb": "^7.0.0",
 		"tailwindcss": "^4.1.17"

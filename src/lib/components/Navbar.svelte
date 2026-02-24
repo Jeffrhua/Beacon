@@ -22,7 +22,7 @@
     <div class="px-10">
         <Button outline color="dark"><BellSolid class="shrink-0 h-7 w-7 cursor-pointer dark:text-white"/></Button>
         <Dropdown activeUrl={activeUrl}>
-            <Listgroup items={notifications} class="border-0 dark:bg-transparent w-[300px]">
+            <Listgroup items={notifications} class="border-0 w-[300px] h-[500px] overflow-y-auto">
                 {#snippet children(item)}
                     <ListgroupItem href="/groups/{item.groupId}">
                         <div class="min-w-full w-full flex items-center space-x-4 py-2 rtl:space-x-reverse">

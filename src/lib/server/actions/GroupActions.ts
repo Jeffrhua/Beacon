@@ -1,7 +1,8 @@
 import { ObjectId, Double } from 'mongodb';
 import { client } from "$lib/server/auth";
 import { redirect } from '@sveltejs/kit';
-import { addGroupMember, removeGroupMember, createGroup, deleteGroup } from "$lib/server/mongodb";
+import { addGroupMember, removeGroupMember, createGroup, deleteGroup, updateGroup } from "$lib/server/mongodb";
+import type { GroupDb } from '$lib/types';
 
 export const GroupActions = {
     sendAlert: async ({ request, params, locals }) => {
@@ -70,6 +71,18 @@ export const GroupActions = {
             throw redirect(303, '/groups');
         }
     },
+    saveGroupSettings: async ({ request }) => {
+        const form = await request.formData();
+
+        const updatedGroup : GroupDb = {
+            _id: new ObjectId(form.get("group_id")),
+            title: form.get("group_title"),
+            description: form.get("group_description"),
+            owner_id: new ObjectId(form.get("owner_id"))
+        }
+        await updateGroup(updatedGroup)
+    },
+
     removeUser: async ({ params, request}) => {
         const form = await request.formData();
         const userId = form.get("userId") as string;

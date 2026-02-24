@@ -342,6 +342,23 @@ export async function deleteGroup(userId: ObjectId, groupId: ObjectId){
   }
 }
 
+// Update a group
+export async function updateGroup(group: GroupDb){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  
+  try {
+    await mainDb.collection("group").updateOne(
+      {_id: group._id},
+      { $set: group }
+    )
+  }
+  catch (error) {
+    console.error("Error:", error)
+  }
+}
+
 //Aggregrate member counts for all groups
 export async function getMemberCount() {
   if (!mainDb) mainDb = client.db('main');

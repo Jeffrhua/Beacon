@@ -175,6 +175,7 @@
                 bind:settingsModal
                 users={data.users}
                 owner={data.owner}
+                group={data.group}
             ></GroupSettings>
             <Button onclick={() => (deleteGroupForm = true)}
                 >Delete group</Button

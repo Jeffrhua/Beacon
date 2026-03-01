@@ -59,6 +59,8 @@
 </div>
    
 
+
+
 <style>
   :global(.beacon-sidebar .px-3.py-4) {
     padding: 0 !important;

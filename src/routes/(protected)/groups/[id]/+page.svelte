@@ -11,12 +11,14 @@
     import RemoveGroupBtn from "$lib/components/RemoveGroupBtn.svelte";
     import DeleteGroupBtn from "$lib/components/DeleteGroupBtn.svelte";
     import GroupSettings from "$lib/components/GroupSettings.svelte";
+    import ExportAlertModal from "$lib/components/ExportAlertModal.svelte";
 
     let { id } = page.params;
     let { data } = $props();
     let formModal = $state(false);
     let deleteGroupForm = $state(false);
     let settingsModal = $state(false);
+    let exportModal = $state(false);
     let alerts = data.alerts ? data.alerts : [];
     const isOwner = data.owner?.id === data.currentUser;
     const isAdmin = data.isAdmin;
@@ -46,6 +48,21 @@
         });
         doc.save(`${data.group.title}_${data.group.id}_Report_${formatDate(new Date())}`)
     };
+
+    const exportAlertsToJSON = () => {
+        if (!data.group) return;
+
+        const jsonString = JSON.stringify(alerts, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${data.group.title}_${data.group.id}_Report_${formatDate(new Date())}.json`;
+        link.click();
+
+        URL.revokeObjectURL(url);
+    }
 </script>
 
 <div class="grid h-full grid-cols-[75%_1fr] grid-rows-1 gap-2">
@@ -125,7 +142,9 @@
                 >
                     Latest Alerts
                 </h5>
-                <button class="text-[12px]" onclick={exportAlertsToPDF}>Export</button>
+                <Button onclick={() => (exportModal = true)}>Export</Button>
+
+                <ExportAlertModal bind:exportModal exportPDF={exportAlertsToPDF} exportJSON={exportAlertsToJSON}></ExportAlertModal>
 
             </div>
             <Listgroup items={alerts} class="border-0 dark:bg-transparent">
@@ -175,7 +194,6 @@
                 bind:settingsModal
                 users={data.users}
                 owner={data.owner}
-                group={data.group}
             ></GroupSettings>
             <Button onclick={() => (deleteGroupForm = true)}
                 >Delete group</Button

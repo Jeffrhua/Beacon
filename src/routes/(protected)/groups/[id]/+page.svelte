@@ -22,6 +22,7 @@
     let alerts = data.alerts ? data.alerts : [];
     const isOwner = data.owner?.id === data.currentUser;
     const isAdmin = data.isAdmin;
+    const userRole = data.userRole;
 
     const exportAlertsToPDF = () => {
         if(!data.group) return;
@@ -183,7 +184,7 @@
             <RemoveGroupBtn></RemoveGroupBtn>
         {/if}
 
-        {#if isOwner || isAdmin}
+        {#if userRole === "owner" || userRole === "admin" || userRole === "moderator"}
             <Button onclick={() => (formModal = true)}>Send an alert</Button>
             <SendAlertModal bind:formModal></SendAlertModal>
         {/if}
@@ -194,6 +195,7 @@
                 bind:settingsModal
                 users={data.users}
                 owner={data.owner}
+                userRole={userRole}
             ></GroupSettings>
             <Button onclick={() => (deleteGroupForm = true)}
                 >Delete group</Button

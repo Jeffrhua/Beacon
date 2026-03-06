@@ -25,7 +25,8 @@ export const load = async ({params, locals}) => {
     // Check user 
     const user_id = new ObjectId(locals.user?.id)
     const isMember = await checkGroupMembership(user_id, groupId);
-    const isAdmin = await checkGroupRole(user_id, groupId, "admin");
+    const userRole = await checkGroupRole(user_id, groupId);  
+    const isAdmin = (userRole == "admin" || userRole == "owner");
     // Load users in current group
     let users = [];
     groupUsers.forEach((u)=>{
@@ -41,7 +42,8 @@ export const load = async ({params, locals}) => {
         currentUser: user_id.toString(),
         isMember: isMember,
         isAdmin: isAdmin,
-        alerts: groupAlerts
+        alerts: groupAlerts,
+        userRole: userRole,
     }
 }
 

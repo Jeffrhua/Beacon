@@ -1,7 +1,7 @@
 import { ObjectId, Double } from 'mongodb';
 import { client } from "$lib/server/auth";
-import { redirect } from '@sveltejs/kit';
-import { addGroupMember, removeGroupMember, createGroup, deleteGroup, updateGroup } from "$lib/server/mongodb";
+import { error, redirect } from '@sveltejs/kit';
+import { addGroupMember, removeGroupMember, createGroup, deleteGroup, updateGroup, checkGroupRole } from "$lib/server/mongodb";
 import type { GroupDb } from '$lib/types';
 
 export const GroupActions = {
@@ -10,6 +10,12 @@ export const GroupActions = {
         const user = locals.user;
         const userId = user.id;
         const groupId = params.id
+
+        const userRole = await checkGroupRole(new ObjectId(userId), new ObjectId(groupId));
+        const allowedRoles = ["admin", "owner", "moderator"];
+        if (!userRole || !allowedRoles.includes(userRole)) {
+            return { error: "No permission to send alert" };
+        }
 
         const title = form.get("title")?.toString().trim();
         const description = form.get("description")?.toString().trim() ?? "";

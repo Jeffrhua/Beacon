@@ -204,25 +204,19 @@ export async function checkGroupMembership(userId: ObjectId, groupId: ObjectId){
 }
 
 // Check if user is a certain role in a given group
-export async function checkGroupRole(userId: ObjectId, groupId: ObjectId, role: string){
+export async function checkGroupRole(userId: ObjectId, groupId: ObjectId){
   if(!mainDb){
     mainDb = client.db('main');
   }
-
-  // Check if the role exists first before searching for it
-  if (!GroupRoles.includes(role)){
-    return null
-  }
-
-
-  const roleMembership = await mainDb.collection("user_group").findOne(
+  //Find the user_group for user and group
+  const entry = await mainDb.collection("user_group").findOne(
     {
       "user_id": userId,
       "group_id": groupId
     }
-  )
-
-  return (roleMembership?.user_role == role)
+  );
+  // if no entry, return null
+    return entry?.user_role ?? null;
 }
 
 // Add user to group

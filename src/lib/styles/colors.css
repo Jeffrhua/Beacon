@@ -6,8 +6,8 @@
   --color-dark-gray: #262626;
   
   /* Alert Colors - Red & Orange */
-  --color-alert-red: #dc2626;
-  --color-danger-red: #b91c1c;
+  --color-alert-red: #991b1b;
+  --color-danger-red: #7f1d1d;
   --color-deep-red: #7f1d1d;
   --color-warning-orange: #ea580c;
   --color-alert-yellow: #fbbf24;
@@ -42,8 +42,8 @@
   --color-input-border: #dc2626;
   
   /* Buttons - Alert red */
-  --color-button-bg: #dc2626;
-  --color-button-hover: #ff4444;
+  --color-button-bg: #991b1b;
+  --color-button-hover: #b91c1c;
   --color-button-text: #ffffff;
   
   /* Hover - Red glow */
@@ -82,7 +82,7 @@ html {
   box-sizing: border-box;
 }
 
-main, .app, div, section, aside, nav {
+main, div, section, aside, nav {
   background-color: transparent;
 }
 
@@ -105,7 +105,7 @@ h3, h4, h5, h6 {
 }
 
 /* Text - WHITE for dark theme */
-p, span, label, li, div, a {
+p, label, li, a {
   color: var(--color-text-primary);
 }
 
@@ -136,7 +136,7 @@ th {
 }
 
 td {
-  background-color: transparent;
+  background-color: #1a1a1a;
   color: var(--color-text-primary);
   padding: 12px;
   border-bottom: 1px solid rgba(220, 38, 38, 0.2);

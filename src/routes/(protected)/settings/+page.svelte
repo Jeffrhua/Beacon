@@ -159,7 +159,7 @@
 
 
 <div class="relative min-h-screen">
-  <Sidebar backdrop={false} params={{ x: -50, duration: 50 }} class="z-50 absolute left-0 top-0 bottom-0 w-64 bg-black" position="absolute" classes={{ nonactive: "p-2", active: "p-2" }}>
+  <Sidebar backdrop={false} params={{ x: -50, duration: 50 }} class="z-50 absolute left-0 top-0 bottom-0 w-64 dark:bg-[#17191C]!" position="absolute" classes={{ nonactive: "p-2", active: "p-2" }}>
     <SidebarGroup>
       <SidebarItem label="Profile" onclick={() => currentSection = "profile"} class="cursor-pointer">
         {#snippet icon()}

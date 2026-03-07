@@ -21,10 +21,10 @@
     </header>
     {#if sidebarOpen}
         <aside class="overflow-y-auto z-50">
-            <Sidebar></Sidebar>
+            <Sidebar />
         </aside>
     {/if}
-	<main class="overflow-y-auto p-4 dark:bg-[#1C1E22]">
+	<main class="overflow-y-auto dark:bg-[#1C1E22]">
 		{@render children()}
 	</main>
 </div>

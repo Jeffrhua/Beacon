@@ -11,18 +11,17 @@
 		activeUrl = page.url.pathname;
 	});
 </script>
-<div class="beacon-sidebar h-full overflow-x-hidden">
+<div class="beacon-sidebar h-full">
 	<Sidebar
 		{activeUrl}
 		backdrop={false}
-		position="absolute"
-		class="relative z-50 px-0! h-full bg-[#F9FAFB] dark:!bg-[#17191C]"
+		class="relative z-50 px-0! h-full w-full bg-[#F9FAFB] dark:bg-[#17191C]!"
 		classes={{
 			nonactive: "flex items-center p-2 text-gray-80 dark:text-white dark:hover:bg-[#222326]",
 			active: "flex items-center p-2 text-gray-80 dark:text-white dark:bg-[#222326]"
 		}}
 		>
-		<SidebarGroup class=" w-full h-full bg-[#F9FAFB] dark:!bg-[#17191C]">
+		<SidebarGroup class=" w-full h-full bg-[#F9FAFB] dark:bg-[#17191C]!">
 			<SidebarItem label="Home" href="/dashboard">
 				{#snippet icon()}
 					<HomeSolid class="shrink-0 h-6 w-6" />
@@ -58,8 +57,6 @@
 	</Sidebar>
 </div>
    
-
-
 
 <style>
   :global(.beacon-sidebar .px-3.py-4) {

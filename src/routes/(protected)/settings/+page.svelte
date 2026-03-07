@@ -158,8 +158,8 @@
 
 
 
-<div class="relative">
-  <Sidebar backdrop={false} params={{ x: -50, duration: 50 }} class="z-50 h-full" position="absolute" classes={{ nonactive: "p-2", active: "p-2" }}>
+<div class="relative min-h-screen">
+  <Sidebar backdrop={false} params={{ x: -50, duration: 50 }} class="z-50 absolute left-0 top-0 bottom-0 w-64 bg-black" position="absolute" classes={{ nonactive: "p-2", active: "p-2" }}>
     <SidebarGroup>
       <SidebarItem label="Profile" onclick={() => currentSection = "profile"} class="cursor-pointer">
         {#snippet icon()}
@@ -224,19 +224,19 @@
           <h2 class="text-xl font-semibold mb-4">Font Size</h2>
           <p class="text-gray-600 mb-4">Adjust the text size across the application</p>
           <div class="space-y-2">
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
               <input type="radio" bind:group={fontSize} value="small" onchange={applyFontSize} class="w-4 h-4" />
               <span>Small</span>
             </Label>
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
               <input type="radio" bind:group={fontSize} value="medium" onchange={applyFontSize} class="w-4 h-4" />
               <span>Medium (Default)</span>
             </Label>
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
               <input type="radio" bind:group={fontSize} value="large" onchange={applyFontSize} class="w-4 h-4" />
               <span>Large</span>
             </Label>
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
               <input type="radio" bind:group={fontSize} value="xlarge" onchange={applyFontSize} class="w-4 h-4" />
               <span>Extra Large</span>
             </Label>
@@ -248,7 +248,7 @@
           <h2 class="text-xl font-semibold mb-4">Focus Indicators</h2>
           <p class="text-gray-600 mb-4">Enhanced visual indicators when navigating with keyboard</p>
           <div class="space-y-2">
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
               <input 
                 type="checkbox" 
                 bind:checked={focusIndicators} 
@@ -266,7 +266,7 @@
           <h2 class="text-xl font-semibold mb-4">Dyslexia-Friendly Font</h2>
           <p class="text-gray-600 mb-4">Switch to a font designed for easier reading</p>
           <div class="space-y-2">
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
               <input 
                 type="checkbox" 
                 bind:checked={dyslexiaFont} 
@@ -284,7 +284,7 @@
           <h2 class="text-xl font-semibold mb-4">Text-to-Speech</h2>
           <p class="text-gray-600 mb-4">Click on any text to hear it read aloud</p>
           <div class="space-y-2">
-            <Label class="flex items-center space-x-3 cursor-pointer p-3 hover:bg-gray-50 rounded">
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
               <input 
                 type="checkbox" 
                 bind:checked={textToSpeech} 

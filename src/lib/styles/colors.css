@@ -357,9 +357,3 @@ i {
   font-weight: 700;
 }
 
-/* Override any light backgrounds */
-.bg-white,
-.bg-light,
-[class*="bg-"] {
-  background-color: transparent !important;
-}

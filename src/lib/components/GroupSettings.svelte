@@ -16,7 +16,7 @@
 
 </script>   
 
-<Modal title="Group Settings" bind:open={settingsModal} size="sm">
+<Modal title="Group Settings" bind:open={settingsModal} size="sm" class="bg-gray-950!">
     <h2 class="text-2xl sm:text-3xl">Group Info</h2>
     <!-- Group Settings Form -->
     <form id="groupSettingsForm" method="POST" action="?/saveGroupSettings">

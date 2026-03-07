@@ -130,6 +130,42 @@ export async function getGroupUsers(groupId: ObjectId){
   return users
 }
 
+export async function getGroupUserRoles(groupId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  if(!db){
+    db = client.db('Beacon');
+  }
+
+  const groupUsers = await mainDb.collection("user_group").find(
+    {
+      "group_id": groupId
+    }
+  ).toArray();
+  const userIds : ObjectId[] = groupUsers.map((u) => u.user_id as ObjectId);
+  if (userIds.length == 0) return [];
+
+  const users = await db.collection<UserDb>("user").find(
+    {
+      _id:{
+        "$in": userIds
+      }
+    }
+  ).toArray();
+  if (users.length == 0) return [];
+
+
+  return users.map((u) => {
+    const role = groupUsers.find(g => g.user_id.equals(u._id))?.user_role ?? "member";
+    return {
+      ...u,
+      role: role
+    }
+  });
+  
+}
+
 // Get group from group id
 export async function getGroup(groupId: ObjectId){
   if(!mainDb){
@@ -248,6 +284,51 @@ export async function removeGroupMember(userId: ObjectId, groupId: ObjectId) {
       "user_id": userId,
       "group_id": groupId,
     })
+  }
+  catch (error) {
+    console.error("Error:", error)
+  }
+}
+
+//Update a user's role in a group
+export async function updateGroupMemberRole(userId: ObjectId, groupId: ObjectId, newRole: string){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+  try {
+    await mainDb.collection("user_group").updateOne({
+      "user_id": userId,
+      "group_id": groupId,
+    },
+    {
+      $set: {
+        "user_role": newRole
+      }
+    })
+  }
+  catch (error) {
+    console.error("Error:", error)
+  }
+}
+
+//Transfer group ownership to another user
+export async function transferGroupOwnership(currentOwnerId: ObjectId, newOwnerId: ObjectId, groupId: ObjectId){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  try{
+    await mainDb.collection("group").updateOne(
+      {
+        "_id": groupId
+      },
+      { $set: {
+        "owner_id": newOwnerId
+      }}
+    );
+
+    await updateGroupMemberRole(currentOwnerId, groupId, "admin");
+    await updateGroupMemberRole(newOwnerId, groupId, "owner");
   }
   catch (error) {
     console.error("Error:", error)

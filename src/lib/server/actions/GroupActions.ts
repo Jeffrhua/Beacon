@@ -1,7 +1,7 @@
 import { ObjectId, Double } from 'mongodb';
 import { client } from "$lib/server/auth";
 import { error, redirect } from '@sveltejs/kit';
-import { addGroupMember, removeGroupMember, createGroup, deleteGroup, updateGroup, checkGroupRole } from "$lib/server/mongodb";
+import { addGroupMember, removeGroupMember, createGroup, deleteGroup, updateGroup, checkGroupRole, updateGroupMemberRole, transferGroupOwnership } from "$lib/server/mongodb";
 import type { GroupDb } from '$lib/types';
 
 export const GroupActions = {
@@ -96,5 +96,35 @@ export const GroupActions = {
         if (userId) {
             await removeGroupMember(new ObjectId(userId), new ObjectId(params.id))
         }
-    }
+    },
+
+    promoteUser: async ({ params, request, locals }) => {
+        const form = await request.formData();
+        const targetUserId = form.get("userId") as string;
+        const currentRole = form.get("currentRole") as string;
+
+        const promoteTo = {
+            member: "moderator",
+            moderator: "admin"
+        }
+        
+        const promoterRole = await checkGroupRole(new ObjectId(locals.user.id), new ObjectId(params.id));
+        if (promoterRole === "owner" && currentRole === "admin") {
+            await transferGroupOwnership(new ObjectId(locals.user.id), new ObjectId(targetUserId), new ObjectId(params.id));
+            return { success: true, message: "Ownership transferred" };
+        }
+
+        if (promoterRole === "owner" && (currentRole === "member" || currentRole === "moderator")) {
+            await updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), promoteTo[currentRole])
+            return { success: true, message: "User promoted" };
+        }
+
+        if (promoterRole === "admin" && currentRole === "member") {
+            await updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), promoteTo[currentRole])
+            return { success: true, message: "User promoted" };
+        }
+
+        return { error: "No permission to promote user" };
+
+    },
 }

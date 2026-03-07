@@ -105,6 +105,7 @@
                             ? data.owner.displayName
                             : data.owner.name}
                     </p>
+                    
                 {/if}
             </div>
             <div>
@@ -189,14 +190,19 @@
             <SendAlertModal bind:formModal></SendAlertModal>
         {/if}
 
-        {#if isOwner}
+        {#if isOwner || isAdmin}
             <Button onclick={() => (settingsModal = true)}>Settings</Button>
             <GroupSettings
                 bind:settingsModal
                 users={data.users}
                 owner={data.owner}
+                group={data.group}
                 userRole={userRole}
+                currentUser={data.currentUser}
             ></GroupSettings>
+        {/if}
+
+        {#if isOwner}
             <Button onclick={() => (deleteGroupForm = true)}
                 >Delete group</Button
             >

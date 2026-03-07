@@ -1,10 +1,18 @@
 <script>
     import { Button, Modal, Listgroup, Input, Label } from "flowbite-svelte";
-    import { HammerSolid } from "flowbite-svelte-icons";
+    import { HammerSolid, ArrowUpOutline } from "flowbite-svelte-icons";
     import RemoveUserBtn from "./RemoveUserBtn.svelte";
-    let { settingsModal = $bindable(), users = [], owner, group } = $props()
+    let { settingsModal = $bindable(), users = [], owner, group, userRole, currentUser } = $props()
     let kickConfirmation = $state(false);
     let selectedUser = $state(null);
+    let promoteConfirmation = $state(false);
+    let selectedPromoteUser = $state(null);
+
+    const canPromote = (targetRole) => {
+        if (userRole === "owner") return targetRole === "member" || targetRole === "moderator" || targetRole === "admin";
+        if (userRole === "admin" ) return targetRole === "member";
+        return false;
+    }
 
 </script>   
 
@@ -30,22 +38,51 @@
     <h2 class="text-2xl sm:text-3xl">Users</h2>
     <Listgroup items={users} class="border-0 dark:bg-transparent">
         {#snippet children(user)}
-        {#if user.id != owner.id}
+        {#if user.id != owner.id && user.id != currentUser}
             <div class = "flex items-center py-2">
-                <p class="flex items-center justify-between w-full text-sm text-gray-900 dark:text-white">
+                <div class="flex items-center justify-between w-full text-sm text-gray-900 dark:text-white">
                     <span>
                         {user.displayName ? user.displayName : user.name}
+                        {user.role === "owner" ? " (Owner)" : user.role === "admin" ? " (Admin)" : user.role === "moderator" ? " (Moderator)" : "(Member)"}
                     </span>
-                    <Button onclick={() => {selectedUser = user; kickConfirmation = true;}}>
-                        <HammerSolid class="ml-auto h-5 w-5 shrink-0" />
-                    </Button>
-                </p>
+                    <div class="flex gap-2 ml-auto">
+                        {#if canPromote(user.role)}
+                            <Button onclick={() => {selectedPromoteUser = user; promoteConfirmation = true;}}>
+                                <ArrowUpOutline class="h-5 w-5 shrink-0" />
+                            </Button>
+                        {/if}
+                        {#if userRole === "owner" || (userRole === "admin" && user.role === "member") }
+                        <Button onclick={() => {selectedUser = user; kickConfirmation = true;}}>
+                            <HammerSolid class="ml-auto h-5 w-5 shrink-0" />
+                        </Button>
+                        {/if}
+                    </div>
+                </div>
             </div>
         {/if}
         {/snippet}
     </Listgroup>
     {#if selectedUser}
         <RemoveUserBtn bind:kickConfirmation user={selectedUser}/>
+    {/if}
+
+    {#if selectedPromoteUser}
+        <Modal title="Confirm Promotion" bind:open={promoteConfirmation} size="sm">
+            <h2 class="text-2xl sm:text-3xl">Confirm Promotion</h2>
+            {#if userRole === "owner" && selectedPromoteUser.role === "admin"}
+                <p>Are you sure you want to transfer ownership to {selectedPromoteUser.displayName ?? selectedPromoteUser.name}? You will be demoted to admin.</p>
+            {:else}
+                <p>Are you sure you want to promote {selectedPromoteUser.displayName ? selectedPromoteUser.displayName : selectedPromoteUser.name}?</p>
+            {/if}
+            <div class="flex justify-end w-full">
+                <form method="POST" action="?/promoteUser">
+                    <input type="hidden" name="userId" value={selectedPromoteUser.id} />
+                    <input type="hidden" name="currentRole" value={selectedPromoteUser.role} />
+                    <Button type="submit">Confirm</Button>
+                </form>
+                <Button type="button" onclick={() => promoteConfirmation = false}>Cancel</Button>
+            </div>
+        </Modal>
     {/if}
 
   {#snippet footer()}

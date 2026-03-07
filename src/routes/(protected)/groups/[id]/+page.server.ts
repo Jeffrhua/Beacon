@@ -1,4 +1,4 @@
-import { getGroup, getGroupUsers, getUser, checkGroupMembership, checkGroupRole, getGroupAlerts } from '$lib/server/mongodb.js'
+import { getGroup, getGroupUserRoles, getUser, checkGroupMembership, checkGroupRole, getGroupAlerts } from '$lib/server/mongodb.js'
 import { ObjectId } from 'mongodb';
 import { GroupActions } from '$lib/server/actions/GroupActions.js';
 
@@ -6,7 +6,7 @@ export const load = async ({params, locals}) => {
     // Load group related information
     const groupId = new ObjectId(params.id);
     const group = await getGroup(groupId);
-    const groupUsers = await getGroupUsers(groupId);
+    const groupUsers = await getGroupUserRoles(groupId);
     if(group == null){
         return {error: "Group not found"}
     }
@@ -30,7 +30,7 @@ export const load = async ({params, locals}) => {
     // Load users in current group
     let users = [];
     groupUsers.forEach((u)=>{
-        users.push({id: u._id.toString(), name: u.name, displayName: u.displayName})
+        users.push({id: u._id.toString(), name: u.name, displayName: u.displayName, role: u.role})
     })
     const {_id, owner_id, ...r} = group;
 

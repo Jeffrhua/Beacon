@@ -76,7 +76,7 @@
     </div>
 
     <!-- Right side area with two cards -->
-    <div class="flex flex-col m-2 overflow-x-hidden">
+    <div class="flex flex-col m-2 gap-3 overflow-x-hidden">
         <!-- Info Card -->
         <Card class="p-4 w-full max-w-none">
             <div class="flex items-center">

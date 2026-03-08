@@ -68,13 +68,12 @@
 
     {#if selectedPromoteUser}
         <Modal title="Confirm Promotion" bind:open={promoteConfirmation} size="sm">
-            <h2 class="text-2xl sm:text-3xl">Confirm Promotion</h2>
             {#if userRole === "owner" && selectedPromoteUser.role === "admin"}
                 <p>Are you sure you want to transfer ownership to {selectedPromoteUser.displayName ?? selectedPromoteUser.name}? You will be demoted to admin.</p>
             {:else}
                 <p>Are you sure you want to promote {selectedPromoteUser.displayName ? selectedPromoteUser.displayName : selectedPromoteUser.name}?</p>
             {/if}
-            <div class="flex justify-end w-full">
+            <div class="flex justify-end w-full gap-2">
                 <form method="POST" action="?/promoteUser">
                     <input type="hidden" name="userId" value={selectedPromoteUser.id} />
                     <input type="hidden" name="currentRole" value={selectedPromoteUser.role} />

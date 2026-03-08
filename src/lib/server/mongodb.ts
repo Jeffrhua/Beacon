@@ -88,14 +88,14 @@ export async function getAlert(alertId: ObjectId){
     mainDb = client.db('main');
   }
   // find the alert object from a given alertId
-  const alert = await mainDb.collection('alert').findOne(
+  const alert_object = await mainDb.collection<AlertDb>('alert').findOne(
     {
       "_id": alertId
     }
   )
-
-  if(!alert) return null;
-  return alert;
+  
+  if(!alert_object) return null;
+  return alert_object;
 }
 
 // Get all users in a group
@@ -442,4 +442,24 @@ export async function getMemberCount() {
   return await mainDb.collection("user_group").aggregate([
     { $group: { _id: "$group_id", count: { $sum: 1 } } }
   ]).toArray();
+}
+
+export async function getUsersFromGroup(id: ObjectId){
+  if (!mainDb) mainDb = client.db('main');
+  if (!db) db = client.db('Beacon')
+  // Find all user id's that are in the given group
+  let user_groups = await mainDb.collection("user_group").find(
+    {
+      "group_id" : id
+    }
+  ).toArray()
+  // extract each user_group entity to be just the user_id
+  let user_ids = user_groups.map((e) => e.user_id)
+  // go through all users that are in the user_ids list
+  const users = await db.collection("user").find(
+    {
+      _id: {"$in": user_ids}
+    }
+  ).toArray()
+  return users
 }

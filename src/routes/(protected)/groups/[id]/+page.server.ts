@@ -10,7 +10,6 @@ export const load = async ({params, locals}) => {
     if(group == null){
         return {error: "Group not found"}
     }
-
     // Check owner information
     const ownerId = group.owner_id
     const owner = await getUser(ownerId);

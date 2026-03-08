@@ -1,8 +1,10 @@
 import { ObjectId, Double } from 'mongodb';
 import { client } from "$lib/server/auth";
 import { error, redirect } from '@sveltejs/kit';
-import { addGroupMember, removeGroupMember, createGroup, deleteGroup, updateGroup, checkGroupRole, updateGroupMemberRole, transferGroupOwnership } from "$lib/server/mongodb";
-import type { GroupDb } from '$lib/types';
+import { addGroupMember, removeGroupMember, createGroup, deleteGroup, updateGroup, checkGroupRole, updateGroupMemberRole, transferGroupOwnership, getUsersFromGroup, getGroup, getAlert } from "$lib/server/mongodb";
+import type { GroupDb, Alert, User, AlertDb } from '$lib/types';
+import { sendAlertEmail } from '$lib/resend';
+import { alertDbToAlert } from '$lib/db-type-conversions';
 
 export const GroupActions = {
     sendAlert: async ({ request, params, locals }) => {
@@ -47,6 +49,16 @@ export const GroupActions = {
             alert_id: new ObjectId(newAlertId),
         })
 
+        // Send email to all users of this group
+        const users = await getUsersFromGroup(new ObjectId(groupId));
+        const user_emails: string[] =  users.map((u) => u.email); // we only need the user_email
+        const group : GroupDb | null = await getGroup(new ObjectId(groupId));
+        const alertDb_object : AlertDb | null = await getAlert(new ObjectId(newAlertId))
+        if(alertDb_object !== null && group !== null){
+            const alert : Alert = alertDbToAlert(alertDb_object)
+            if(alert !== null)
+                await sendAlertEmail(user_emails, alert, group)
+        }
         return { success: true, message: 'yayyy!!!' }
     },
     joinGroup: async ({ params, locals }) => {

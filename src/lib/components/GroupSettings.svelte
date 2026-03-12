@@ -1,16 +1,25 @@
 <script>
     import { Button, Modal, Listgroup, Input, Label } from "flowbite-svelte";
-    import { HammerSolid, ArrowUpOutline } from "flowbite-svelte-icons";
+    import { HammerSolid, ArrowUpOutline, ArrowDownOutline } from "flowbite-svelte-icons";
     import RemoveUserBtn from "./RemoveUserBtn.svelte";
     let { settingsModal = $bindable(), users = [], owner, group, userRole, currentUser } = $props()
+    console.log(userRole)
     let kickConfirmation = $state(false);
     let selectedUser = $state(null);
     let promoteConfirmation = $state(false);
     let selectedPromoteUser = $state(null);
+    let demoteConfirmation = $state(false);
+    let selectedDemoteUser = $state(null);
 
     const canPromote = (targetRole) => {
         if (userRole === "owner") return targetRole === "member" || targetRole === "moderator" || targetRole === "admin";
         if (userRole === "admin" ) return targetRole === "member";
+        return false;
+    }
+
+    const canDemote = (targetRole) => {
+        if (userRole === "owner") return targetRole === "admin" || targetRole === "moderator";
+        if (userRole === "admin" ) return targetRole === "moderator";
         return false;
     }
 
@@ -38,7 +47,7 @@
     <h2 class="text-2xl sm:text-3xl">Users</h2>
     <Listgroup items={users} class="border-0 dark:bg-transparent">
         {#snippet children(user)}
-        {#if user.id != owner.id && user.id != currentUser}
+        {#if user.id != currentUser}
             <div class = "flex items-center py-2">
                 <div class="flex items-center justify-between w-full text-sm text-gray-900 dark:text-white">
                     <span>
@@ -51,7 +60,12 @@
                                 <ArrowUpOutline class="h-5 w-5 shrink-0" />
                             </Button>
                         {/if}
-                        {#if userRole === "owner" || (userRole === "admin" && user.role === "member") }
+                        {#if canDemote(user.role)}
+                            <Button onclick={() => {selectedDemoteUser = user; demoteConfirmation = true;}}>
+                                <ArrowDownOutline class="h-5 w-5 shrink-0" />
+                            </Button>
+                        {/if}
+                        {#if userRole === "owner" || (userRole === "admin" && (user.role === "member" || user.role === "moderator"))}
                         <Button onclick={() => {selectedUser = user; kickConfirmation = true;}}>
                             <HammerSolid class="ml-auto h-5 w-5 shrink-0" />
                         </Button>
@@ -80,6 +94,20 @@
                     <Button type="submit">Confirm</Button>
                 </form>
                 <Button type="button" onclick={() => promoteConfirmation = false}>Cancel</Button>
+            </div>
+        </Modal>
+    {/if}
+
+    {#if selectedDemoteUser}
+        <Modal title="Confirm Demotion" bind:open={demoteConfirmation} size="sm">
+            <p>Are you sure you want to demote {selectedDemoteUser.displayName ? selectedDemoteUser.displayName : selectedDemoteUser.name}?</p>
+            <div class="flex justify-end w-full gap-2">
+                <form method="POST" action="?/demoteUser">
+                    <input type="hidden" name="userId" value={selectedDemoteUser.id} />
+                    <input type="hidden" name="currentRole" value={selectedDemoteUser.role} />
+                    <Button type="submit">Confirm</Button>
+                </form>
+                <Button type="button" onclick={() => demoteConfirmation = false}>Cancel</Button>
             </div>
         </Modal>
     {/if}

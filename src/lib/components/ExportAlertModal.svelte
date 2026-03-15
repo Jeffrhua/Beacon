@@ -8,5 +8,3 @@
     <Button onclick={exportJSON} class="text-[12px]">Export Alerts as JSON</Button>
 
 </Modal>
-
-

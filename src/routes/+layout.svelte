@@ -3,14 +3,6 @@
 	import { onMount } from "svelte";
 	import { theme } from "$lib/stores/theme";
 	import '$lib/styles/colors.css';  // Use $lib alias
-
-	onMount(() => {
-		const socket = new WebSocket("ws://localhost:8080")
-		socket.addEventListener("open", ()=> {
-			console.log("Opened")
-		})
-		return () => socket.close();
-	});
 	
 	let { children } = $props();
 </script>

@@ -1,8 +1,49 @@
 <script lang="ts">
     import { PenSolid } from "flowbite-svelte-icons";
     import { Button, Card, Listgroup } from "flowbite-svelte";
+    import { onMount } from "svelte";
+
+    let { data } = $props();
     let mock_users = [{ name: "User1", id: 1 }, { name: "User2", id: 2 }, { name: "User3", id: 3 }];
     let current_conversation = mock_users[0].id;
+
+    let socket: WebSocket;
+	let messages: Array<string> = [];
+	
+	onMount(() => {
+		socket = new WebSocket("ws://localhost:8080")
+
+        socket.addEventListener("open", () => {
+		console.log("Opened");
+        
+        // Register a user to the websocket when loading in
+		socket.send(JSON.stringify({
+			type: "register",
+			userId: data.userId
+		    }));
+        
+        if (data.userId === "697a753e6edd1ae5e1d85dab"){
+            socket.send(JSON.stringify({
+                type: "chat",
+                from: data.userId,
+                to: "69b86cfc0dac729f2dba04af",
+                text: "Hello World"
+	        }));
+        }
+	    });
+
+        // Listen for any messages
+        socket.addEventListener("message", (event) => {
+		const msg = JSON.parse(event.data);
+        console.log(data.userId, "received message:", msg);
+
+            if (msg.type === "chat") {
+                messages = [...messages, `${msg.from}: ${msg.text}`];
+            }
+	    });
+        
+		return () => socket.close();
+	});
     
 </script>
 

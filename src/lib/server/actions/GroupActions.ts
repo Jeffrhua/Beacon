@@ -139,4 +139,30 @@ export const GroupActions = {
         return { error: "No permission to promote user" };
 
     },
+
+    demoteUser: async ({ params, request, locals }) => {
+        const form = await request.formData();
+        const targetUserId = form.get("userId") as string;
+        const currentRole = form.get("currentRole") as string;
+
+        const demoteTo = {
+            admin: "moderator",
+            moderator: "member"
+        }
+
+        const demoterRole = await checkGroupRole(new ObjectId(locals.user.id), new ObjectId(params.id));
+
+        //Only owner can demote an admin and only owner and admin can demote a moderator
+        if (demoterRole === "owner" && (currentRole === "admin" || currentRole === "moderator")) {
+            await updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), demoteTo[currentRole])
+            return { success: true, message: "User demoted" };
+        }
+
+        if (demoterRole === "admin" && currentRole === "moderator") {
+            await updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), demoteTo[currentRole])
+            return { success: true, message: "User demoted" };
+        }
+
+        return { error: "No permission to demote user" };
+    },
 }

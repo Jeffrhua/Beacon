@@ -2,15 +2,19 @@
     import { PenSolid } from "flowbite-svelte-icons";
     import { Button, Card, Listgroup } from "flowbite-svelte";
     import { onMount } from "svelte";
+    import CreateConversationForm from "$lib/components/CreateConversationForm.svelte"
 
     let { data } = $props();
+    let groupChatForm = $state(false);
     let mock_users = [{ name: "User1", id: 1 }, { name: "User2", id: 2 }, { name: "User3", id: 3 }];
     let current_conversation = mock_users[0].id;
 
     let socket: WebSocket;
 	let messages: Array<string> = [];
 	
+    // Client side web socket logic
 	onMount(() => {
+        // At some point this should point to a standalone server destination
 		socket = new WebSocket("ws://localhost:8080")
 
         socket.addEventListener("open", () => {
@@ -50,9 +54,10 @@
 <div class="p-5 flex flex-row h-full">
     <div class="conversations flex-none">
         <div class="pb-5">
-            <Button size="xs"
-                ><PenSolid class="shrink-0 h-6 w-6" /> New Message</Button
-            >
+            <Button onclick={() => (groupChatForm = true)} size="xs">
+                <PenSolid class="shrink-0 h-6 w-6" /> New Message
+            </Button>
+            <CreateConversationForm bind:groupChatForm></CreateConversationForm>
         </div>
         <Card>
             <Listgroup items={mock_users} class="border-0">

@@ -434,7 +434,7 @@ export async function updateGroup(group: GroupDb){
   }
 }
 
-//Aggregrate member counts for all groups
+// Aggregrate member counts for all groups
 export async function getMemberCount() {
   if (!mainDb) mainDb = client.db('main');
   
@@ -444,6 +444,7 @@ export async function getMemberCount() {
   ]).toArray();
 }
 
+// Get all users from a group
 export async function getUsersFromGroup(id: ObjectId){
   if (!mainDb) mainDb = client.db('main');
   if (!db) db = client.db('Beacon')
@@ -462,4 +463,20 @@ export async function getUsersFromGroup(id: ObjectId){
     }
   ).toArray()
   return users
+}
+
+// Add a new chat group between "x" amount of users
+export async function createChatGroup(participants: Array<ObjectId>){
+  if(!mainDb){
+    mainDb = client.db('main');
+  }
+
+  try {
+    await mainDb.collection("conversation").insertOne({
+      "participants": participants
+    })
+  }
+  catch (error) {
+    console.error("Error:", error)
+  }
 }

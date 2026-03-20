@@ -6,6 +6,7 @@
 
     let { data } = $props();
     let groupChatForm = $state(false);
+    let groupChats = data.groupChats ? data.groupChats : [];
     let mock_users = [{ name: "User1", id: 1 }, { name: "User2", id: 2 }, { name: "User3", id: 3 }];
     let current_conversation = mock_users[0].id;
 
@@ -60,7 +61,7 @@
             <CreateConversationForm bind:groupChatForm></CreateConversationForm>
         </div>
         <Card>
-            <Listgroup items={mock_users} class="border-0">
+            <Listgroup items={groupChats} class="border-0">
                 {#snippet children(item)}
                     <div
                         class="flex items-center space-x-4 py-2 rtl:space-x-reverse"
@@ -71,7 +72,7 @@
                                 <p
                                     class="truncate text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    {item.name}
+                                    {item.userDetails.map(u => u.name).join(", ")}
                                 </p>
                             </div>
                         {/if}

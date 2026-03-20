@@ -8,7 +8,7 @@ export const load = async ({ locals }) => {
 
     const userId = new ObjectId(locals.user.id);
     const db = client.db('test');
-    const beaconDb = client.db('Beacon');
+    const beaconDb = client.db('main');
 
     // Get user's email
     const fullUser = await beaconDb.collection('user').findOne({ _id: userId });
@@ -49,7 +49,7 @@ export const actions = {
         if (!locals.user) return { success: false };
 
         const userId = new ObjectId(locals.user.id);
-        const beaconDb = client.db('Beacon');
+        const beaconDb = client.db('main');
         const fullUser = await beaconDb.collection('user').findOne({ _id: userId });
         const email = fullUser?.email;
 

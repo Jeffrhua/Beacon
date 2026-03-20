@@ -478,11 +478,22 @@ export async function getAllChatGroups(userId: ObjectId){
     db = client.db('main');
   }
 
-  const chats = await db.collection("conversation").find(
+  // Get all chats a user is a part of, return the details of each user in each chat
+  const chats = await db.collection("conversation").aggregate([
     {
-      participants: userId
+      $match: {
+        participants: userId
+      }
+    },
+    {
+      $lookup: {
+        from: "user",
+        localField: "participants",
+        foreignField: "_id",
+        as: "userDetails"
+      }
     }
-  ).toArray();
+  ]).toArray();
 
   return chats
 }

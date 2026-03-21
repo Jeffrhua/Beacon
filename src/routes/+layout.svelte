@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {browser} from "$app/environment";
+	import { browser } from "$app/environment";
 	import { onMount } from "svelte";
 	import { theme } from "$lib/stores/theme";
 	import '$lib/styles/colors.css';  // Use $lib alias

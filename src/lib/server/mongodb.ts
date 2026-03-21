@@ -6,10 +6,9 @@ import { alertDbToAlert } from '$lib/db-type-conversions';
 const GroupRoles = ["owner", "admin", "moderator", "member"]
 
 let db: Db;
-let mainDb: Db;
 export async function getUserSettingDb(){
     if(!db){
-      db = client.db('Beacon');
+      db = client.db('main');
       await db.collection('user_settings').createIndex({userId:1})
       await db.collection('user_settings').createIndex({settingTypeId:1})
       await db.collection('user_settings').createIndex({value:1})
@@ -19,18 +18,18 @@ export async function getUserSettingDb(){
 
 // Given an alert, find the group object it came from
 export async function getGroupFromAlert(alertId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   // find the alert_group object with the given alertId
-  const userAlertId = await mainDb.collection('alert_group').findOne(
+  const userAlertId = await db.collection('alert_group').findOne(
     {
       "alert_id": alertId
     }
   )
   if(!userAlertId) return null;
   // the alert_group object that is found 
-  const group = await mainDb.collection('group').findOne(
+  const group = await db.collection('group').findOne(
     {
       "_id": userAlertId.group_id
     }
@@ -41,11 +40,11 @@ export async function getGroupFromAlert(alertId: ObjectId){
 
 // Get all the group ids a user is a part of
 export async function getUserGroupIds(userId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   // find all the user_group objects
-   const userGroups = await mainDb.collection("user_group").find(
+   const userGroups = await db.collection("user_group").find(
     {
       "user_id": userId
     }
@@ -57,12 +56,12 @@ export async function getUserGroupIds(userId: ObjectId){
 
 // Get all group objects a user is a part of
 export async function getUserGroups(userId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   const groupIds : ObjectId[] = await getUserGroupIds(userId);
   if (groupIds.length == 0) return [];
-  const groups = await mainDb.collection<GroupDb>("group").find(
+  const groups = await db.collection<GroupDb>("group").find(
     {
       _id:{
         "$in" : groupIds
@@ -75,20 +74,20 @@ export async function getUserGroups(userId: ObjectId){
 
 // Get all groups
 export async function getAllGroups(){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
-  const groups = await mainDb.collection<GroupDb>("group").find({}).toArray();
+  const groups = await db.collection<GroupDb>("group").find({}).toArray();
   return groups;
 }
 
 // Get alert from id
 export async function getAlert(alertId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   // find the alert object from a given alertId
-  const alert_object = await mainDb.collection<AlertDb>('alert').findOne(
+  const alert_object = await db.collection<AlertDb>('alert').findOne(
     {
       "_id": alertId
     }
@@ -100,16 +99,12 @@ export async function getAlert(alertId: ObjectId){
 
 // Get all users in a group
 export async function getGroupUsers(groupId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
-  }
-
   if(!db){
-    db = client.db('Beacon');
+    db = client.db('main');
   }
 
   // get the user_group object from the given id
-  const groupUsers = await mainDb.collection("user_group").find(
+  const groupUsers = await db.collection("user_group").find(
     {
       "group_id": groupId
     }
@@ -131,14 +126,11 @@ export async function getGroupUsers(groupId: ObjectId){
 }
 
 export async function getGroupUserRoles(groupId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
-  }
   if(!db){
-    db = client.db('Beacon');
+    db = client.db('main');
   }
 
-  const groupUsers = await mainDb.collection("user_group").find(
+  const groupUsers = await db.collection("user_group").find(
     {
       "group_id": groupId
     }
@@ -168,11 +160,11 @@ export async function getGroupUserRoles(groupId: ObjectId){
 
 // Get group from group id
 export async function getGroup(groupId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
 
-  const group = await mainDb.collection<GroupDb>("group").findOne(
+  const group = await db.collection<GroupDb>("group").findOne(
     {
       "_id" : groupId
     }
@@ -183,7 +175,7 @@ export async function getGroup(groupId: ObjectId){
 // Get user from user id
 export async function getUser(userId: ObjectId){
   if(!db){
-    db = client.db('Beacon');
+    db = client.db('main');
   }
   const user = await db.collection("user").findOne(
     {
@@ -195,14 +187,14 @@ export async function getUser(userId: ObjectId){
 
 // Get all of the User's alerts from groups they're a part of
 export async function getAllUserAlerts(userId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   // Get all the group id's of the groups the user is in
   const userGroups : ObjectId[] = await getUserGroupIds(userId);
   if(userGroups.length == 0) return [];
   // find all the alert_group objects that are part of userGroups
-  const userAlertIds = await mainDb.collection('alert_group').find(
+  const userAlertIds = await db.collection('alert_group').find(
     {
       "group_id" : {
         "$in":userGroups
@@ -225,11 +217,11 @@ export async function getAllUserAlerts(userId: ObjectId){
 
 // Check if user is in a given group
 export async function checkGroupMembership(userId: ObjectId, groupId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
 
-  const membership = await mainDb.collection("user_group").findOne(
+  const membership = await db.collection("user_group").findOne(
     {
       "user_id": userId,
       "group_id": groupId
@@ -241,11 +233,11 @@ export async function checkGroupMembership(userId: ObjectId, groupId: ObjectId){
 
 // Check if user is a certain role in a given group
 export async function checkGroupRole(userId: ObjectId, groupId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   //Find the user_group for user and group
-  const entry = await mainDb.collection("user_group").findOne(
+  const entry = await db.collection("user_group").findOne(
     {
       "user_id": userId,
       "group_id": groupId
@@ -257,12 +249,12 @@ export async function checkGroupRole(userId: ObjectId, groupId: ObjectId){
 
 // Add user to group
 export async function addGroupMember(userId: ObjectId, groupId: ObjectId, userRole: string){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
 
   try {
-    await mainDb.collection("user_group").insertOne({
+    await db.collection("user_group").insertOne({
       "user_id": userId,
       "group_id": groupId,
       "user_role": userRole
@@ -275,12 +267,12 @@ export async function addGroupMember(userId: ObjectId, groupId: ObjectId, userRo
 
 // Remove user from group
 export async function removeGroupMember(userId: ObjectId, groupId: ObjectId) {
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
 
   try {
-    await mainDb.collection("user_group").deleteOne({
+    await db.collection("user_group").deleteOne({
       "user_id": userId,
       "group_id": groupId,
     })
@@ -292,11 +284,11 @@ export async function removeGroupMember(userId: ObjectId, groupId: ObjectId) {
 
 //Update a user's role in a group
 export async function updateGroupMemberRole(userId: ObjectId, groupId: ObjectId, newRole: string){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   try {
-    await mainDb.collection("user_group").updateOne({
+    await db.collection("user_group").updateOne({
       "user_id": userId,
       "group_id": groupId,
     },
@@ -313,12 +305,12 @@ export async function updateGroupMemberRole(userId: ObjectId, groupId: ObjectId,
 
 //Transfer group ownership to another user
 export async function transferGroupOwnership(currentOwnerId: ObjectId, newOwnerId: ObjectId, groupId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
 
   try{
-    await mainDb.collection("group").updateOne(
+    await db.collection("group").updateOne(
       {
         "_id": groupId
       },
@@ -337,11 +329,11 @@ export async function transferGroupOwnership(currentOwnerId: ObjectId, newOwnerI
 
 // Get alerts from a group
 export async function getGroupAlerts(groupId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   // get alert_group objects
-  const alert_groups = await mainDb.collection('alert_group').find(
+  const alert_groups = await db.collection('alert_group').find(
     {
       "group_id": groupId
     }
@@ -361,12 +353,12 @@ export async function getGroupAlerts(groupId: ObjectId){
 
 // Creates a group
 export async function createGroup(ownerId: ObjectId, title: String, description: String){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
 
   try {
-    const result = await mainDb.collection("group").insertOne({
+    const result = await db.collection("group").insertOne({
       "title": title,
       "description": description,
       "owner_id": ownerId
@@ -375,7 +367,7 @@ export async function createGroup(ownerId: ObjectId, title: String, description:
     const newGroupId = result.insertedId;
 
     if (newGroupId){
-      await mainDb.collection("user_group").insertOne({
+      await db.collection("user_group").insertOne({
         "user_id": ownerId,
         "group_id": newGroupId,
         "user_role": "owner"
@@ -394,8 +386,8 @@ export async function createGroup(ownerId: ObjectId, title: String, description:
 
 // Delete group
 export async function deleteGroup(userId: ObjectId, groupId: ObjectId){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
 
   const group = await getGroup(groupId);
@@ -403,11 +395,11 @@ export async function deleteGroup(userId: ObjectId, groupId: ObjectId){
   // Only proceed if current user is the owner
   if (group?.owner_id.equals(userId)){
     try {
-      await mainDb.collection("group").deleteOne({
+      await db.collection("group").deleteOne({
         "group_id": groupId
       })
 
-      await mainDb.collection("user_group").deleteMany({
+      await db.collection("user_group").deleteMany({
         "group_id": groupId
       })
     }
@@ -419,12 +411,12 @@ export async function deleteGroup(userId: ObjectId, groupId: ObjectId){
 
 // Update a group
 export async function updateGroup(group: GroupDb){
-  if(!mainDb){
-    mainDb = client.db('main');
+  if(!db){
+    db = client.db('main');
   }
   
   try {
-    await mainDb.collection("group").updateOne(
+    await db.collection("group").updateOne(
       {_id: group._id},
       { $set: group }
     )
@@ -434,21 +426,21 @@ export async function updateGroup(group: GroupDb){
   }
 }
 
-//Aggregrate member counts for all groups
+// Aggregrate member counts for all groups
 export async function getMemberCount() {
-  if (!mainDb) mainDb = client.db('main');
+  if (!db) db = client.db('main');
   
   //Group by id and count each member
-  return await mainDb.collection("user_group").aggregate([
+  return await db.collection("user_group").aggregate([
     { $group: { _id: "$group_id", count: { $sum: 1 } } }
   ]).toArray();
 }
 
+// Get all users from a group
 export async function getUsersFromGroup(id: ObjectId){
-  if (!mainDb) mainDb = client.db('main');
-  if (!db) db = client.db('Beacon')
+  if (!db) db = client.db('main');
   // Find all user id's that are in the given group
-  let user_groups = await mainDb.collection("user_group").find(
+  let user_groups = await db.collection("user_group").find(
     {
       "group_id" : id
     }
@@ -462,4 +454,46 @@ export async function getUsersFromGroup(id: ObjectId){
     }
   ).toArray()
   return users
+}
+
+// Add a new chat group between "x" amount of users
+export async function createChatGroup(participants: Array<ObjectId>){
+  if(!db){
+    db = client.db('main');
+  }
+
+  try {
+    await db.collection("conversation").insertOne({
+      "participants": participants
+    })
+  }
+  catch (error) {
+    console.error("Error:", error)
+  }
+}
+
+// Get all chats a user is a part of
+export async function getAllChatGroups(userId: ObjectId){
+  if(!db){
+    db = client.db('main');
+  }
+
+  // Get all chats a user is a part of, return the details of each user in each chat
+  const chats = await db.collection("conversation").aggregate([
+    {
+      $match: {
+        participants: userId
+      }
+    },
+    {
+      $lookup: {
+        from: "user",
+        localField: "participants",
+        foreignField: "_id",
+        as: "userDetails"
+      }
+    }
+  ]).toArray();
+
+  return chats
 }

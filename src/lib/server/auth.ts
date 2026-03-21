@@ -7,7 +7,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 const client = new MongoClient(MONGODB_URI);
 await client.connect();
 
-const db = client.db("Beacon");
+const db = client.db("main");
 export { client };
 
 export const auth = betterAuth({

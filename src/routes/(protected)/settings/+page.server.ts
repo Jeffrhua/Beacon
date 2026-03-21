@@ -3,7 +3,7 @@ import { fail, redirect } from "@sveltejs/kit";
 import { ObjectId } from "mongodb";
 
 export async function load( {locals} ) {
-    const db = client.db('Beacon');
+    const db = client.db('main');
     const settings = db.collection('user_settings');
     const sessionUser = locals.user;
 
@@ -26,7 +26,7 @@ export const actions = {
         const profileDescription = form.get("profile_description")?.toString().trim() ?? "";
         const phoneNumber = form.get("phone_number")?.toString().trim() ?? "";
 
-        const db = client.db('Beacon')
+        const db = client.db('main')
         const res = await db.collection('user').updateOne(
             { _id: new ObjectId(userId) },
             {
@@ -46,7 +46,7 @@ export const actions = {
         const user = locals.user;
         const userId = user.id;
 
-        const db = client.db('Beacon')
+        const db = client.db('main')
         
         await db.collection("user").deleteOne({ _id: new ObjectId(userId) });
         await db.collection("user_settings").deleteMany({ userId });

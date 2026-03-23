@@ -48,3 +48,16 @@ export type Alert = {
   user_id: string,
   dateCreated: Date
 }
+
+export type GroupChat = {
+  id: string,
+  participants: Array<string>,
+  userDetails: Array<User>
+}
+
+export type Message = {
+  id: string,
+  conversation_id: string,
+  sender_id: string,
+  content: string
+}

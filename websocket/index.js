@@ -3,6 +3,8 @@ import { WebSocketServer } from 'ws';
 const wss = new WebSocketServer({ port: 8080 });
 const clients = new Map();
 
+console.log("Node server on...")
+
 wss.on('connection', function connection(ws) {
   console.log("Client connected")
 
@@ -19,15 +21,17 @@ wss.on('connection', function connection(ws) {
 
     // Handle any messages
     if (message.type === 'chat') {
-      const targetSocket = clients.get(message.to);
+      for (const userId of message.to) {
+        const targetSocket = clients.get(userId);
 
-      if (targetSocket && targetSocket.readyState === ws.OPEN) {
-        console.log("Message sent....")
-        targetSocket.send(JSON.stringify({
-          type: 'chat',
-          from: message.from,
-          text: message.text
-        }));
+        if (targetSocket && targetSocket.readyState === WebSocket.OPEN) {
+          targetSocket.send(JSON.stringify({
+            type: "chat",
+            conversation_id: message.conversation_id,
+            from: message.from,
+            text: message.text
+          }));
+        }
       }
     }
   })

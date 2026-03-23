@@ -495,5 +495,5 @@ export async function getAllChatGroups(userId: ObjectId){
     }
   ]).toArray();
 
-  return chats
+  return chats;
 }

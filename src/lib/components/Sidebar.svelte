@@ -1,6 +1,6 @@
 <script lang="ts">
     import { sidebar, Sidebar, SidebarGroup, SidebarItem, SidebarButton, uiHelpers  } from 'flowbite-svelte';
-	import { UsersGroupSolid, HomeSolid, BellSolid, CogSolid, MapPinSolid, GlobeSolid, TruckOutline, MessagesSolid } from 'flowbite-svelte-icons';
+	import { UsersGroupSolid, HomeSolid, BellSolid, CogSolid, MapPinSolid, GlobeSolid, TruckOutline, MessagesSolid, UsersSolid } from 'flowbite-svelte-icons';
 	import { page } from "$app/state";
 	let activeUrl = $state(page.url.pathname);
 	const spanClass = "flex-1 ms-3 whitespace-nowrap";
@@ -50,6 +50,11 @@
 			<SidebarItem label="Messages" href="/messages">
 				{#snippet icon()}
 					<MessagesSolid class="shrink-0 h-6 w-6" />
+				{/snippet}
+			</SidebarItem>
+			<SidebarItem label="Friends" href="/friends">
+				{#snippet icon()}
+					<UsersSolid class="shrink-0 h-6 w-6" />
 				{/snippet}
 			</SidebarItem>
 			<SidebarItem label="Settings" href="/settings">

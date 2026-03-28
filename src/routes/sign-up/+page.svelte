@@ -10,12 +10,18 @@
 	const signupEmail = writable("");
 	const signupPassword = writable("");
 	const signupConfirmPassword = writable("");
+	const tosAccepted = writable(false);
+	let tosModalOpen = $state(false);
 
     const handleSignUp = async () => {
+	if (!$tosAccepted) {
+		alert("Error: You must accept the terms and conditions.");
+		return;
+	}
 	if($signupPassword !== $signupConfirmPassword){
 			alert("Error: Passwords do not match.");
 			return;
-		}
+	}
 	const user = {
 		firstName: $signupFirstName,
 		lastName: $signupLastName,
@@ -67,8 +73,8 @@
 			<Label for="confirm_password" class="mb-2">Confirm password</Label>
 			<Input type="password" id="confirm_password" bind:value={$signupConfirmPassword} required />
 		</div>
-		<Checkbox classes={{ div: "mb-6 gap-1 rtl:space-x-reverse" }} required>
-			I agree with the <A href="/" class="text-primary-700 dark:text-primary-600 hover:underline">terms and conditions</A>.
+		<Checkbox bind:checked={$tosAccepted} classes={{ div: "mb-6 gap-1 rtl:space-x-reverse" }}>
+			I agree with the <a href="/" onclick={(e) => { e.preventDefault(); tosModalOpen = true; }} class="text-primary-700 dark:text-primary-600 hover:underline">terms and conditions</a>.
 		</Checkbox>
 		<Button type="submit" onclick={handleSignUp}>Sign up</Button>
 		<div class="mt-3">
@@ -78,6 +84,47 @@
 		</form>
 	</Card>
 </div>
+
+{#if tosModalOpen}
+<div style="background-color: rgba(0,0,0,0.85)!important;" class="fixed inset-0 z-50 flex items-center justify-center">
+<div style="background-color: #1f2937; border: 1px solid #374151;" class="rounded-lg shadow-xl w-full max-w-lg mx-4 p-6">
+	<h2 class="text-xl font-semibold mb-2">Terms and Conditions</h2>
+	<p class="text-sm text-gray-500 mb-4">Last updated: March 2026</p>
+	
+	<div class="overflow-y-auto max-h-72 space-y-4 text-sm text-gray-600 dark:text-gray-400 pr-2">
+	<div>
+		<h3 class="font-semibold text-gray-800 dark:text-white mb-1">1. Service description</h3>
+		<p>Beacon is a community emergency alert platform that enables users to send, receive, and respond to emergency alerts in real time. The platform is provided as-is with no guarantees regarding uptime during emergencies.</p>
+	</div>
+	<div>
+		<h3 class="font-semibold text-gray-800 dark:text-white mb-1">2. Location data</h3>
+		<p>Beacon may collect and use your location data to deliver relevant alerts and notify nearby responders. You may disable location sharing at any time in Privacy Settings.</p>
+	</div>
+	<div>
+		<h3 class="font-semibold text-gray-800 dark:text-white mb-1">3. Alert notifications</h3>
+		<p>You consent to receiving push notifications, SMS, or email alerts for emergency events in your registered area.</p>
+	</div>
+	<div>
+		<h3 class="font-semibold text-gray-800 dark:text-white mb-1">4. Data sharing with authorities</h3>
+		<p>During declared emergencies, your alert activity and general location may be shared with local emergency services or authorized first responders. Beacon does not sell your personal data.</p>
+	</div>
+	<div>
+		<h3 class="font-semibold text-gray-800 dark:text-white mb-1">5. No guarantee of service</h3>
+		<p>Do not rely solely on Beacon as your only emergency communication method.</p>
+	</div>
+	<div>
+		<h3 class="font-semibold text-gray-800 dark:text-white mb-1">6. User conduct</h3>
+		<p>You agree not to submit false or malicious alerts. Misuse may result in account suspension.</p>
+	</div>
+	</div>
+
+	<div class="mt-6 flex justify-end gap-3">
+	<Button color="alternative" onclick={() => tosModalOpen = false}>Close</Button>
+	<Button onclick={() => { tosAccepted.set(true); tosModalOpen = false; }}>Accept & Close</Button>
+	</div>
+</div>
+</div>
+{/if}
 
 
 

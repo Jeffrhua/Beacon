@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea, PhoneInput } from "flowbite-svelte";
+  import { Toggle, Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea, PhoneInput } from "flowbite-svelte";
   import { KeyboardSolid, LockSolid, UserSolid, InfoCircleSolid, CloseCircleSolid, EyeSolid } from "flowbite-svelte-icons";
   import { onMount } from 'svelte';
   import { client } from "$lib/auth-client";
@@ -176,7 +176,7 @@
           <KeyboardSolid class="shrink-0 h-6 w-6" />
         {/snippet}
       </SidebarItem>
-      <SidebarItem label="Security" onclick={() => currentSection = "security"} class="cursor-pointer">
+      <SidebarItem label="Privacy & Security" onclick={() => currentSection = "security"} class="cursor-pointer">
         {#snippet icon()}
           <LockSolid class="shrink-0 h-6 w-6" />
         {/snippet}
@@ -303,11 +303,89 @@
       {/if}
       
       {#if currentSection === "security"}
-      <form method="POST" action="?/deleteAccount">
+        <h2 class="text-xl font-semibold mb-2">Privacy</h2>
+
+        <div class="mb-6">
+        <p class="text-lg font-medium mb-2">Location Sharing</p>
+        <p class="text-gray-600 mb-3">Control whether your location is shared with friends.</p>
+          <Toggle 
+            checked={user.locationSharing ?? true}
+            name="location_sharing"
+            onchange={async (e) => {
+              const formData = new FormData();
+              formData.append("location_sharing", e.target.checked ? "on" : "off");
+              await fetch("?/updatePrivacy", {
+                method: "POST",
+                body: formData,
+              });
+            }}
+            >Share your location with friends</Toggle>
+        </div>
+      
+        <h3 class="font-semibold mb-2">Alerts</h3>
+        <p class="text-gray-600 mb-3">Control whether your name is shown when you submit an alert.</p>
+        <Toggle
+          checked={user.anonymousAlerts ?? false}
+          name="anonymous_alerts"
+          onchange={async (e) => {
+            const formData = new FormData();
+            formData.append("location_sharing", (user.locationSharing ?? true) ? "on" : "off");
+            formData.append("anonymous_alerts", e.target.checked ? "on" : "off");
+            await fetch("?/updatePrivacy", { method: "POST", body: formData });
+          }}
+        >Submit alerts anonymously</Toggle>
+
+        <hr class="my-6 border-gray-700" />
+        <form method="POST" action="?/deleteAccount">
         <div class="mb-6 grid gap-4">
           <Button type="submit">Delete Account</Button>
         </div>
       </form>
+
+      {/if}
+
+      {#if currentSection === "terms"}
+      <div class="space-y-6">
+        <div>
+          <h2 class="text-xl font-semibold mb-2">Terms of Service</h2>
+          <p class="text-gray-600 mb-4">Last updated: March 2026</p>
+        </div>
+
+        <div class="overflow-y-auto max-h-96 space-y-4 pr-2 text-sm text-gray-600 dark:text-gray-400">
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-white mb-1">1. Service description</h3>
+            <p>Beacon is a community emergency alert platform that enables users to send, receive, and respond to emergency alerts in real time. The platform is provided as-is, and no guarantees are made regarding uptime or response times during emergencies.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-white mb-1">2. Location data</h3>
+            <p>Beacon may collect and use your location data to deliver relevant alerts and notify nearby responders. You consent to the collection and processing of your location information during active alert events. You may disable location sharing at any time in Privacy Settings.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-white mb-1">3. Alert notifications</h3>
+            <p>You consent to receiving push notifications, SMS, or email alerts for emergency events in your registered area. Notification delivery is dependent on your device settings and network availability.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-white mb-1">4. Data sharing with authorities</h3>
+            <p>In the event of a declared emergency, your alert activity and general location may be shared with local emergency services, law enforcement, or authorized first responders. Beacon does not sell your personal data to third parties.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-white mb-1">5. No guarantee of service</h3>
+            <p>Beacon does not guarantee platform availability at all times, particularly during large-scale emergencies. Do not rely solely on Beacon as your only emergency communication method.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-white mb-1">6. User conduct</h3>
+            <p>You agree not to submit false, misleading, or malicious alerts. Misuse of the platform may result in account suspension and may be reported to appropriate authorities.</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-white mb-1">7. Changes to terms</h3>
+            <p>Beacon reserves the right to update these terms at any time. You will be notified of significant changes and may be asked to re-accept updated terms.</p>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-500">
+          You accepted these terms on <span class="font-medium">{new Date(data.user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>.
+        </p>
+      </div>
       {/if}
       
     </div>

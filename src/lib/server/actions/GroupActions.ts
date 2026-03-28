@@ -13,6 +13,11 @@ export const GroupActions = {
         const userId = user.id;
         const groupId = params.id
 
+        const db = client.db('main');
+        const userDoc = await db.collection('user').findOne({ _id: new ObjectId(userId) });
+        const isAnonymous = userDoc?.anonymousAlerts ?? false;
+        const displayName = isAnonymous ? "Anonymous" : (userDoc?.displayName ?? userDoc?.name ?? "Unknown");
+
         const userRole = await mon.checkGroupRole(new ObjectId(userId), new ObjectId(groupId));
         const allowedRoles = ["admin", "owner", "moderator"];
         if (!userRole || !allowedRoles.includes(userRole)) {
@@ -31,7 +36,6 @@ export const GroupActions = {
             return //Probs add error stuff here
         }
 
-        const db = client.db('main')
         const alertRes = await db.collection('alert').insertOne({
             title: title,
             description: description,
@@ -39,7 +43,8 @@ export const GroupActions = {
             longitude: new Double(longitude),
             latitude: new Double(latitude),
             address: address,
-            user_id: new ObjectId(userId)
+            user_id: new ObjectId(userId),
+            //submittedBy: displayName
         })
 
         const newAlertId = alertRes.insertedId;
@@ -50,10 +55,10 @@ export const GroupActions = {
         })
 
         // Send email to all users of this group
-        const users = await getUsersFromGroup(new ObjectId(groupId));
+        const users = await mon.getUsersFromGroup(new ObjectId(groupId));
         const user_emails: string[] =  users.map((u) => u.email); // we only need the user_email
-        const group : GroupDb | null = await getGroup(new ObjectId(groupId));
-        const alertDb_object : AlertDb | null = await getAlert(new ObjectId(newAlertId))
+        const group : GroupDb | null = await mon.getGroup(new ObjectId(groupId));
+        const alertDb_object : AlertDb | null = await mon.getAlert(new ObjectId(newAlertId))
         if(alertDb_object !== null && group !== null){
             const alert : Alert = alertDbToAlert(alertDb_object)
             if(alert !== null)

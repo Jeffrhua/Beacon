@@ -52,5 +52,27 @@ export const actions = {
         await db.collection("user_settings").deleteMany({ userId });
         
         return { success: true, message: 'yayyy!!!' }
+    },
+
+    updatePrivacy: async ({ request, locals }) => {
+        const form = await request.formData();
+        const user = locals.user;
+        const userId = user.id;
+
+        const locationSharing = form.get('location_sharing') === 'on';
+        const anonymousAlerts = form.get('anonymous_alerts') === 'on'; 
+        
+        const db = client.db('main')
+        await db.collection('user').updateOne(
+            { _id: new ObjectId(userId) },
+            {
+                $set: {
+                    locationSharing: locationSharing,
+                    anonymousAlerts: anonymousAlerts
+                }
+            },
+            { upsert: true }
+        )
+        return { success: true, message: 'true' }
     }
 }

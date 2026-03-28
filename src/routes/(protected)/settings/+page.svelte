@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea, PhoneInput } from "flowbite-svelte";
+  import { Toggle, Sidebar, SidebarGroup, SidebarItem, Input, Label, Button, Textarea, PhoneInput } from "flowbite-svelte";
   import { KeyboardSolid, LockSolid, UserSolid, InfoCircleSolid, CloseCircleSolid, EyeSolid } from "flowbite-svelte-icons";
   import { onMount } from 'svelte';
   import { client } from "$lib/auth-client";
@@ -176,7 +176,7 @@
           <KeyboardSolid class="shrink-0 h-6 w-6" />
         {/snippet}
       </SidebarItem>
-      <SidebarItem label="Security" onclick={() => currentSection = "security"} class="cursor-pointer">
+      <SidebarItem label="Privacy & Security" onclick={() => currentSection = "security"} class="cursor-pointer">
         {#snippet icon()}
           <LockSolid class="shrink-0 h-6 w-6" />
         {/snippet}
@@ -303,11 +303,45 @@
       {/if}
       
       {#if currentSection === "security"}
-      <form method="POST" action="?/deleteAccount">
+        <h2 class="text-xl font-semibold mb-2">Privacy</h2>
+
+        <div class="mb-6">
+        <p class="text-lg font-medium mb-2">Location Sharing</p>
+        <p class="text-gray-600 mb-3">Control whether your location is shared with friends.</p>
+          <Toggle 
+            checked={user.locationSharing ?? true}
+            name="location_sharing"
+            onchange={async (e) => {
+              const formData = new FormData();
+              formData.append("location_sharing", e.target.checked ? "on" : "off");
+              await fetch("?/updatePrivacy", {
+                method: "POST",
+                body: formData,
+              });
+            }}
+            >Share your location with friends</Toggle>
+        </div>
+      
+        <h3 class="font-semibold mb-2">Alerts</h3>
+        <p class="text-gray-600 mb-3">Control whether your name is shown when you submit an alert.</p>
+        <Toggle
+          checked={user.anonymousAlerts ?? false}
+          name="anonymous_alerts"
+          onchange={async (e) => {
+            const formData = new FormData();
+            formData.append("location_sharing", (user.locationSharing ?? true) ? "on" : "off");
+            formData.append("anonymous_alerts", e.target.checked ? "on" : "off");
+            await fetch("?/updatePrivacy", { method: "POST", body: formData });
+          }}
+        >Submit alerts anonymously</Toggle>
+
+        <hr class="my-6 border-gray-700" />
+        <form method="POST" action="?/deleteAccount">
         <div class="mb-6 grid gap-4">
           <Button type="submit">Delete Account</Button>
         </div>
       </form>
+
       {/if}
 
       {#if currentSection === "terms"}

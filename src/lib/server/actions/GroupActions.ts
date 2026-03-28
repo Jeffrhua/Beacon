@@ -1,7 +1,7 @@
 import { ObjectId, Double } from 'mongodb';
 import { client } from "$lib/server/auth";
 import { error, redirect } from '@sveltejs/kit';
-import { addGroupMember, removeGroupMember, createGroup, deleteGroup, updateGroup, checkGroupRole, updateGroupMemberRole, transferGroupOwnership, getUsersFromGroup, getGroup, getAlert } from "$lib/server/mongodb";
+import * as mon from "$lib/server/mongodb";
 import type { GroupDb, Alert, User, AlertDb } from '$lib/types';
 import { sendAlertEmail } from '$lib/resend';
 import { alertDbToAlert } from '$lib/db-type-conversions';
@@ -13,7 +13,7 @@ export const GroupActions = {
         const userId = user.id;
         const groupId = params.id
 
-        const userRole = await checkGroupRole(new ObjectId(userId), new ObjectId(groupId));
+        const userRole = await mon.checkGroupRole(new ObjectId(userId), new ObjectId(groupId));
         const allowedRoles = ["admin", "owner", "moderator"];
         if (!userRole || !allowedRoles.includes(userRole)) {
             return { error: "No permission to send alert" };
@@ -61,12 +61,15 @@ export const GroupActions = {
         }
         return { success: true, message: 'yayyy!!!' }
     },
+
     joinGroup: async ({ params, locals }) => {
-        await addGroupMember(new ObjectId(locals.user.id), new ObjectId(params.id), "member")
+        await mon.addGroupMember(new ObjectId(locals.user.id), new ObjectId(params.id), "member")
     },
+
     leaveGroup: async ({ params, locals }) => {
-        await removeGroupMember(new ObjectId(locals.user.id), new ObjectId(params.id))
+        await mon.removeGroupMember(new ObjectId(locals.user.id), new ObjectId(params.id))
     },
+
     groupCreate: async ({ request, locals }) => {
         const form = await request.formData();
         const user = locals.user;
@@ -75,20 +78,22 @@ export const GroupActions = {
         const title = form.get("title")?.toString().trim();
         const description = form.get("description")?.toString().trim() ?? "";  
         
-        const groupId = await createGroup(new ObjectId(userId), title, description)
+        const groupId = await mon.createGroup(new ObjectId(userId), title, description)
 
         if (groupId){
             throw redirect(303, `/groups/${groupId}`);
         }
     },
+
     groupDelete: async ({ params, request, locals}) => {
         const form = await request.formData();
         
         if (form.get("res") == "success"){
-            await deleteGroup(new ObjectId(locals.user.id), new ObjectId(params.id))
+            await mon.deleteGroup(new ObjectId(locals.user.id), new ObjectId(params.id))
             throw redirect(303, '/groups');
         }
     },
+
     saveGroupSettings: async ({ request }) => {
         const form = await request.formData();
 
@@ -98,7 +103,7 @@ export const GroupActions = {
             description: form.get("group_description"),
             owner_id: new ObjectId(form.get("owner_id"))
         }
-        await updateGroup(updatedGroup)
+        await mon.updateGroup(updatedGroup)
     },
 
     removeUser: async ({ params, request}) => {
@@ -106,7 +111,7 @@ export const GroupActions = {
         const userId = form.get("userId") as string;
 
         if (userId) {
-            await removeGroupMember(new ObjectId(userId), new ObjectId(params.id))
+            await mon.removeGroupMember(new ObjectId(userId), new ObjectId(params.id))
         }
     },
 
@@ -120,19 +125,19 @@ export const GroupActions = {
             moderator: "admin"
         }
         
-        const promoterRole = await checkGroupRole(new ObjectId(locals.user.id), new ObjectId(params.id));
+        const promoterRole = await mon.checkGroupRole(new ObjectId(locals.user.id), new ObjectId(params.id));
         if (promoterRole === "owner" && currentRole === "admin") {
-            await transferGroupOwnership(new ObjectId(locals.user.id), new ObjectId(targetUserId), new ObjectId(params.id));
+            await mon.transferGroupOwnership(new ObjectId(locals.user.id), new ObjectId(targetUserId), new ObjectId(params.id));
             return { success: true, message: "Ownership transferred" };
         }
 
         if (promoterRole === "owner" && (currentRole === "member" || currentRole === "moderator")) {
-            await updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), promoteTo[currentRole])
+            await mon.updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), promoteTo[currentRole])
             return { success: true, message: "User promoted" };
         }
 
         if (promoterRole === "admin" && currentRole === "member") {
-            await updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), promoteTo[currentRole])
+            await mon.updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), promoteTo[currentRole])
             return { success: true, message: "User promoted" };
         }
 
@@ -150,19 +155,35 @@ export const GroupActions = {
             moderator: "member"
         }
 
-        const demoterRole = await checkGroupRole(new ObjectId(locals.user.id), new ObjectId(params.id));
+        const demoterRole = await mon.checkGroupRole(new ObjectId(locals.user.id), new ObjectId(params.id));
 
         //Only owner can demote an admin and only owner and admin can demote a moderator
         if (demoterRole === "owner" && (currentRole === "admin" || currentRole === "moderator")) {
-            await updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), demoteTo[currentRole])
+            await mon.updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), demoteTo[currentRole])
             return { success: true, message: "User demoted" };
         }
 
         if (demoterRole === "admin" && currentRole === "moderator") {
-            await updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), demoteTo[currentRole])
+            await mon.updateGroupMemberRole(new ObjectId(targetUserId), new ObjectId(params.id), demoteTo[currentRole])
             return { success: true, message: "User demoted" };
         }
 
         return { error: "No permission to demote user" };
+    },
+
+    addUsersToConversation: async ({ request, locals }) => {
+        const form = await request.formData();
+        const userStrings = (form.get("users") as string).split(",").map(u => u.trim()).filter(Boolean);
+        let userIds = new Array<ObjectId>;
+
+        // Add user who requested group creation first
+        userIds.push(new ObjectId(locals.user.id))
+
+        // Then convert all other participants to object ids
+        for (const userId of userStrings) {
+            userIds.push(new ObjectId(userId));
+        }
+
+        await mon.createChatGroup(userIds);
     },
 }

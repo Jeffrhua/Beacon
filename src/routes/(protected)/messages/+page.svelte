@@ -17,8 +17,15 @@
     // Store the selected chat
     let selectedChat = $state<GroupChat | null>(null);
     let selectedChatId = $derived(selectedChat?.id ?? null);
-    function openConversation(chat: GroupChat){
+
+    // Grab old messages, than add on whatever new messages come in
+    async function openConversation(chat: GroupChat) {
         selectedChat = chat;
+
+        const res = await fetch(`/messages/${chat.id}`);
+        const oldMessages: Message[] = await res.json();
+
+        messages = oldMessages;
     }
 
     // Handle the enter key press

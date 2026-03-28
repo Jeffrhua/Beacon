@@ -190,5 +190,5 @@ export const GroupActions = {
         }
 
         await mon.createChatGroup(userIds);
-    },
+    }
 }

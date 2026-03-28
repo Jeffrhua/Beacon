@@ -493,3 +493,13 @@ export async function getAllUsers(excludedUsers : ObjectId[]) {
   }).toArray();
   return users;
 }
+
+export async function getAllMsgs(conversationId: ObjectId){
+  const db = await ensureDb();
+
+  const msgs = await db.collection('conversation_message').find({
+    conversation_id: conversationId
+  }).sort({ createdAt: 1 }).toArray();
+
+  return msgs;
+}

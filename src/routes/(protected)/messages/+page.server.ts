@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import type { PageServerLoad } from "./$types";
 import { ChatActions } from "$lib/server/actions/chatActions.js";
-import { getAllChatGroups } from "$lib/server/mongodb.js";
+import { getAllChatGroups, getAllMsgs } from "$lib/server/mongodb.js";
 import type { User, GroupChat } from "$lib/types.js";
 
 export const load: PageServerLoad = async ({locals}) => {

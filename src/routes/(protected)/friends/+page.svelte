@@ -39,6 +39,17 @@
               {item.email}
             </p>
           </div>
+          <form method="POST" action="?/removeFriend" use:enhance>
+          <input type="hidden" name="friendId" value={item.id} />
+          <button
+            type="submit"
+            onclick={() => addedIds = addedIds.delete(item.id)}
+            class="text-xs px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600
+                   disabled:text-green-600 disabled:border-green-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            Remove
+          </button>
+        </form>
         </div>
       {/snippet}
     </Listgroup>

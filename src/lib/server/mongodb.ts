@@ -483,6 +483,18 @@ export async function addFriend(currentUser: ObjectId, otherUser: ObjectId){
   }
 }
 
+export async function removeFriend(currentUser: ObjectId, otherUser: ObjectId){
+  const db = await ensureDb();
+  try {
+    await db.collection("friend").deleteOne({
+      "user_id": currentUser,
+      "friend_id": otherUser
+    })
+  } catch (error) {
+    console.error("Error:", error)
+  }
+}
+
 export async function getAllUsers(excludedUsers : ObjectId[]) {
   const db = await ensureDb();
 

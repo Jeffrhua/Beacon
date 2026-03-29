@@ -8,7 +8,7 @@
     let { data } = $props();
     let groupChatForm = $state(false);
     let groupChats: GroupChat[] = data.groupChats ? data.groupChats : [];
-
+    let friends = data.friends || []
     let socket: WebSocket;
 
 	let messages = $state<Message[]>([]);
@@ -98,7 +98,7 @@
             <Button onclick={() => (groupChatForm = true)} size="xs">
                 <PenSolid class="shrink-0 h-6 w-6" /> New Message
             </Button>
-            <CreateConversationForm bind:groupChatForm></CreateConversationForm>
+            <CreateConversationForm bind:groupChatForm bind:friends></CreateConversationForm>
         </div>
         <Card>
             {#each groupChats as chat}

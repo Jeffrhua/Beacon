@@ -18,6 +18,10 @@
     let selectedChat = $state<GroupChat | null>(null);
     let selectedChatId = $derived(selectedChat?.id ?? null);
 
+    // Precompute values from messages
+    const userMap = $derived(selectedChat ? Object.fromEntries(selectedChat.userDetails.map(u => [u.id, u.name])): {});
+    const filteredMessages = $derived(messages.filter(m => m.conversation_id === selectedChatId));
+
     // Grab old messages, than add on whatever new messages come in
     async function openConversation(chat: GroupChat) {
         selectedChat = chat;
@@ -121,9 +125,9 @@
             </h2>
             <div class="border-t border-gray-500 my-2"></div>
             <div class="flex-1 overflow-y-auto">
-                {#each messages.filter(message => message.conversation_id === selectedChatId) as message}
+                {#each filteredMessages as message}
                     <div class="rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-2">
-                        {`${message.sender_id}: ${message.content}`}
+                        {`${userMap[message.sender_id]}: ${message.content}`}
                     </div>
                 {/each}
             </div>

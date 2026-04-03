@@ -44,7 +44,7 @@ export const GroupActions = {
             latitude: new Double(latitude),
             address: address,
             user_id: new ObjectId(userId),
-            //submittedBy: displayName
+            submittedBy: displayName
         })
 
         const newAlertId = alertRes.insertedId;

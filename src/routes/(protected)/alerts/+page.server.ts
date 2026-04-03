@@ -19,7 +19,8 @@ export const load: PageServerLoad = async ({locals}) => {
             alertSeverity: alert.severity,
             date: alert.dateCreated,
             groupId: group._id.toString(),
-            groupName: group.title
+            groupName: group.title,
+            submittedBy: alert.submittedBy ?? "Unknown"
         }
         })
       );

@@ -26,6 +26,7 @@
     <TableHeadCell>Description</TableHeadCell>
     <TableHeadCell>Group</TableHeadCell>
     <TableHeadCell>Severity</TableHeadCell>
+    <TableHeadCell>Submitted By</TableHeadCell>
   </TableHead>
   <TableBody>
     {#each filteredItems as item}
@@ -37,6 +38,7 @@
         <TableBodyCell>
           <SeverityBadge severity={item?.alertSeverity}/>
         </TableBodyCell>
+        <TableBodyCell>{item?.submittedBy ?? "Unknown"}</TableBodyCell>
       </TableBodyRow>
     {/each}
   </TableBody>

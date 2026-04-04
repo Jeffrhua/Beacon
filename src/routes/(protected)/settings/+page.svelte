@@ -159,6 +159,23 @@
 
 
 <div class="relative min-h-screen">
+  <div class="md:hidden px-4 py-3 mb-6 border-b border-gray-700" style="background-color: #17191C;">
+      <select 
+          class="w-full px-3 py-2 rounded-lg border border-gray-600 dark:bg-gray-800 dark:text-white"
+          onchange={(e) => currentSection = e.target.value}
+          value={currentSection}
+      >
+          <option value="profile">Profile</option>
+          <option value="appearance">Appearance</option>
+          <option value="accessibility">Accessibility</option>
+          <option value="security">Privacy & Security</option>
+          <option value="terms">Terms of Service</option>
+      </select>
+    <button onclick={handleSignOut} class="w-full mt-2 py-2 rounded-lg text-red-400 border !border-red-800 text-sm !bg-transparent">
+        Logout
+    </button>
+  </div>
+<div class="hidden md:block">
   <Sidebar backdrop={false} params={{ x: -50, duration: 50 }} class="z-50 absolute left-0 top-0 bottom-0 w-64 dark:bg-[#17191C]!" position="absolute" classes={{ nonactive: "p-2", active: "p-2" }}>
     <SidebarGroup>
       <SidebarItem label="Profile" onclick={() => currentSection = "profile"} class="cursor-pointer">
@@ -193,6 +210,7 @@
       </SidebarItem>
     </SidebarGroup>
   </Sidebar>
+</div>
   
   <div class="px-4 md:ml-64">
     <div class="rounded-lg border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">

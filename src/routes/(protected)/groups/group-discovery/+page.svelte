@@ -54,10 +54,34 @@
                 <Button onclick={() => showCreateGroupModal = true}>Create Group</Button>
                 <CreateGroupModal bind:formModal={showCreateGroupModal}/>
             </span>
-            <Search size="md" placeholder="Search for Groups" class="max-w-md" bind:value={searchTerm}/>
-        </div> 
+                <div class="hidden md:block">
+                <Search size="md" placeholder="Search for Groups" class="max-w-md" bind:value={searchTerm}/>
+            </div> 
+        </div>
     </div>
-    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
+
+        <!-- Mobile search bar -->
+    <div class="md:hidden mb-3">
+        <Search size="md" placeholder="Search for Groups" bind:value={searchTerm}/>
+    </div>
+
+    <!-- Mobile Cards -->
+    <div class="md:hidden flex flex-col gap-3">
+        {#each pagedGroups as group (group.id)}
+            <a href="/groups/{group.id}" class="block rounded-lg p-4" style="background-color: #1f1f1f; border: 1px solid #3a1a1a;">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-semibold text-white">{group.title}</span>
+                    <span class="flex items-center gap-1 text-xs text-gray-400">
+                        <UserOutline class="w-4 h-4" />
+                        {group.memberCount}
+                    </span>
+                </div>
+                <p class="text-sm text-gray-400 truncate">{group.description}</p>
+            </a>
+        {/each}
+    </div>
+
+    <div class="hidden md:block bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
         <Table hoverable = {true} border={false} class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <TableHead class="bg-gray-50 dark:bg-gray-800 text-xs uppercase text-black dark:text-gray-400">
                 <TableHeadCell class="px-6 py-4">Title</TableHeadCell>

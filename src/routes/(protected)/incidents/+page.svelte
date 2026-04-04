@@ -74,12 +74,12 @@
 
 <div class="p-5">
 
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <h1 class="text-2xl font-bold text-[#e03030]">Incidents</h1>
-        <Input placeholder="Search incidents..." bind:value={search} class="w-72" />
+        <Input placeholder="Search incidents..." bind:value={search} class="w-full md:w-72" />
     </div>
 
-    <div class="flex gap-4 mb-4">
+    <div class="flex flex-wrap gap-3 mb-4">
         <div class="flex flex-col gap-1">
             <label class="text-sm text-gray-400">Status</label>
             <select
@@ -92,7 +92,7 @@
                 {/each}
             </select>
         </div>
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1 flex-1 min-w-[120px]">
             <label class="text-sm text-gray-400">Date Range</label>
             <select
                 bind:value={filterDate}
@@ -114,6 +114,48 @@
         </div>
     </div>
 
+ <!-- Mobile Cards -->
+    <div class="md:hidden flex flex-col gap-3">
+        {#each filtered as incident (incident.id)}
+            <div class="rounded-lg p-4" style="background-color: #1f1f1f; border: 1px solid #3a1a1a;">
+                <div class="flex items-start justify-between mb-2">
+                    <span class="font-semibold text-white text-sm">{incident.description}</span>
+                    {#if incident.isAdminControlled}
+                        <form method="POST" action="?/updateStatus" use:enhance>
+                            <input type="hidden" name="id" value={incident.id} />
+                            <select name="status"
+                                class="border border-gray-500 rounded px-2 py-1 text-xs font-semibold text-white ml-2"
+                                style="background-color: {getStatusColor(incident.status ?? 'active')};"
+                                onchange={(e) => (e.currentTarget as HTMLSelectElement).form?.requestSubmit()}>
+                                {#each statusOptions as opt}
+                                    <option value={opt} selected={incident.status === opt} class="bg-gray-800 text-white">{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
+                                {/each}
+                            </select>
+                        </form>
+                    {:else}
+                        <span class="px-2 py-1 rounded text-xs font-semibold text-white ml-2 shrink-0"
+                            style="background-color: {getStatusColor(incident.status ?? 'active')};">
+                            {(incident.status ?? 'active').charAt(0).toUpperCase() + (incident.status ?? 'active').slice(1)}
+                        </span>
+                    {/if}
+                </div>
+                <p class="text-xs text-gray-400 mb-1">{incident.address}</p>
+                <div class="flex items-center justify-between mt-2">
+                    <span class="px-2 py-1 rounded text-xs font-semibold text-white bg-blue-600">
+                        {incident.groupName ?? "No Group"}
+                    </span>
+                    <span class="text-xs text-gray-500">{formatDate(incident.createdAt)}</span>
+                </div>
+            </div>
+        {/each}
+
+        {#if filtered.length === 0}
+            <p class="text-center text-gray-500 py-6">No incidents match your filters.</p>
+        {/if}
+    </div>
+
+
+<div class="hidden md:block">
     <Table striped={true} hoverable={true} color="gray" border={false}>
         <TableHead>
             <TableHeadCell>Created</TableHeadCell>
@@ -192,6 +234,7 @@
             {/if}
         </TableBody>
     </Table>
+</div>
 
     <p class="text-sm text-gray-500 mt-3">
         Showing {filtered.length} of {data.incidents.length} incidents

@@ -9,7 +9,7 @@
 </script>
 
 <div class="w-full h-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-[#23272F]">
-    <button class="p-2 hover:bg-gray-200 rounded" onclick={toggleSidebar} aria-label="Toggle menu">
+    <button class="md:flex hidden p-2 hover:bg-gray-200 rounded" onclick={toggleSidebar} aria-label="Toggle menu">
 		☰
 	</button>
     <div class ="flex items-center gap-2 w-full justify-center">

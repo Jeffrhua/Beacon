@@ -28,7 +28,7 @@
     </div>
     <Listgroup items={data.friends || []} class="border-0">
       {#snippet children(item)}
-        <div class="flex items-center space-x-4 py-2 rtl:space-x-reverse">
+        <div class="flex items-center space-x-4 p-4 rtl:space-x-reverse">
           <div class="min-w-0 flex-1">
             <p
               class="truncate text-sm font-medium text-gray-900 dark:text-white"

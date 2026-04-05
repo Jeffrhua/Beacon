@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { redirect, fail } from '@sveltejs/kit';
-import { MongoClient, ObjectId, Double } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import { MONGODB_URI } from '$env/static/private';
 import { getUserGroups } from '$lib/server/mongodb';
 
@@ -13,10 +13,8 @@ export const load: PageServerLoad = async ({ locals }) => {
     const userId = new ObjectId(locals.user.id);
     await client.connect();
 
-    // Get user's groups
     const groups = await getUserGroups(userId);
 
-    // Get all incidents for this user's groups
     const groupIds = groups.map(g => g._id.toString());
     const incidents = await db.collection('incidents').find({
         groupId: { $in: groupIds }
@@ -24,13 +22,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     return {
         incidents: incidents.map(inc => ({
-            lat: inc.lat,
-            lng: inc.lng,
+            lat:         inc.lat,
+            lng:         inc.lng,
             description: inc.description,
-            address: inc.address || ''
+            address:     inc.address || '',
+            severity:    inc.severity ?? 'low'
         })),
         groups: groups.map(g => ({
-            id: g._id.toString(),
+            id:    g._id.toString(),
             title: g.title
         }))
     };
@@ -40,43 +39,63 @@ export const actions: Actions = {
     addIncident: async ({ request, locals }) => {
         if (!locals.user) throw redirect(303, '/sign-in');
 
-        const userId = new ObjectId(locals.user.id);
+        const userId   = new ObjectId(locals.user.id);
         const formData = await request.formData();
 
-        const lat = parseFloat(formData.get('lat') as string);
-        const lng = parseFloat(formData.get('lng') as string);
+        const lat         = parseFloat(formData.get('lat') as string);
+        const lng         = parseFloat(formData.get('lng') as string);
         const description = formData.get('description') as string;
-        const address = formData.get('address') as string;
-        const groupId = formData.get('groupId') as string;
+        const address     = formData.get('address') as string;
+        const groupId     = formData.get('groupId') as string;
+        const severity    = (formData.get('severity') as string) || 'low';
 
         if (!description) return fail(400, { error: 'Description is required' });
-        if (!groupId) return fail(400, { error: 'Please select a group' });
+        if (!groupId)     return fail(400, { error: 'Please select a group' });
+
+        // Convert photo to base64 if provided
+        let photoData: string | null = null;
+        const photo = formData.get('photo') as File | null;
+        if (photo && photo.size > 0) {
+            const buffer = Buffer.from(await photo.arrayBuffer());
+            photoData = `data:${photo.type};base64,${buffer.toString('base64')}`;
+        }
 
         await client.connect();
 
-        // 1. Save the incident (same as before)
+        // Fetch user's name from Beacon db
+        const beaconDb    = client.db('Beacon');
+        const fullUser    = await beaconDb.collection('user').findOne({ _id: userId });
+        const submittedBy = fullUser?.name ?? 'Unknown';
+
+        const now = new Date();
+
+        // Save incident
         await db.collection('incidents').insertOne({
             groupId,
             lat,
             lng,
             description,
             address,
-            createdAt: new Date()
+            severity,
+            status:    'active',
+            photo:     photoData,
+            createdAt: now
         });
 
-        // 2. NEW: Create alert so it shows in bell notification
-        const mainDb = client.db('main');
+        // Save alert — kept like original so validator never rejects
+        const mainDb   = client.db('main');
         const alertRes = await mainDb.collection('alert').insertOne({
-			title: 'New Incident Reported',
-			description: description,
-			severity: 'medium',
-			longitude: lng,        // plain number, no Double()
-			latitude: lat,         // plain number, no Double()
-			address: address,
-			user_id: new ObjectId(userId)  // no dateCreated!
-		});
+            title:       'New Incident Reported',
+            description: description,
+            severity:    'medium',
+            longitude:   lng,
+            latitude:    lat,
+            address:     address,
+            user_id:     new ObjectId(userId),
+            submittedBy: submittedBy
+        });
 
-        // 3. NEW: Link alert to group so all members see it in their bell
+        // Link alert to group
         await mainDb.collection('alert_group').insertOne({
             group_id: new ObjectId(groupId),
             alert_id: alertRes.insertedId

@@ -220,7 +220,6 @@ export async function getAllUserAlerts(userId: ObjectId) {
         latitude: "$alertDetails.latitude",
         address: "$alertDetails.address",
         user_id: "$alertDetails.user_id",
-        created_at: "$alertDetails.created_at",
         userDetails: 1
       }
     }

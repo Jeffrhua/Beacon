@@ -173,31 +173,60 @@ const db = await ensureDb();
 }
 
 // Get all of the User's alerts from groups they're a part of
-export async function getAllUserAlerts(userId: ObjectId){
-const db = await ensureDb();
-  // Get all the group id's of the groups the user is in
-  const userGroups : ObjectId[] = await getUserGroupIds(userId);
-  if(userGroups.length == 0) return [];
-  // find all the alert_group objects that are part of userGroups
-  const userAlertIds = await db.collection('alert_group').find(
+export async function getAllUserAlerts(userId: ObjectId) {
+  const db = await ensureDb();
+
+  const userGroups: ObjectId[] = await getUserGroupIds(userId);
+  if (userGroups.length === 0) return [];
+
+  const alerts = await db.collection("alert_group").aggregate([
     {
-      "group_id" : {
-        "$in":userGroups
+      $match: {
+        group_id: { $in: userGroups }
+      }
+    },
+    {
+      $lookup: {
+        from: "alert",
+        localField: "alert_id",
+        foreignField: "_id",
+        as: "alertDetails"
+      }
+    },
+    {
+      $unwind: "$alertDetails"
+    },
+    {
+      $lookup: {
+        from: "user",
+        localField: "alertDetails.user_id",
+        foreignField: "_id",
+        as: "userDetails"
+      }
+    },
+    {
+      $unwind: {
+        path: "$userDetails",
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    {
+      $project: {
+        _id: "$alertDetails._id",
+        title: "$alertDetails.title",
+        description: "$alertDetails.description",
+        severity: "$alertDetails.severity",
+        longitude: "$alertDetails.longitude",
+        latitude: "$alertDetails.latitude",
+        address: "$alertDetails.address",
+        user_id: "$alertDetails.user_id",
+        created_at: "$alertDetails.created_at",
+        userDetails: 1
       }
     }
-  ).map((ag) => ag.alert_id) // map them to the id only
-  .toArray();
-  
-  // convert to alertdb ojbject
-  const alerts = await Promise.all(
-    userAlertIds.map(id => getAlert(id))
-  );
+  ]).toArray();
 
-  const alertsDb: AlertDb[] = alerts.filter((a): a is AlertDb => a !== null);
-  //convert to alert object
-  const userAlerts: Alert[] = alertsDb.map(alertDbToAlert);
-
-  return userAlerts
+  return alerts;
 }
 
 // Check if user is in a given group

@@ -6,26 +6,27 @@ import type { Alert } from "$lib/types";
 
 export const load: PageServerLoad = async ({locals}) => {
     const userId = new ObjectId(locals.user.id);
-    const userAlerts : Alert[] = await getAllUserAlerts(userId);
+    const userAlerts = await getAllUserAlerts(userId);
     // put all the user's alert into a readable object
     const groupAlerts = await Promise.all(
         userAlerts.map(async (alert) => {
-            const group = await getGroupFromAlert(new ObjectId(alert.id));
+            const timestamp = new ObjectId(alert._id).getTimestamp();
+            const group = await getGroupFromAlert(new ObjectId(alert._id));
             if(!group) return;
             return {
             alertTitle: alert.title,
-            alertCreated: formatDate(alert.dateCreated),
+            alertCreated: formatDate(timestamp),
             alertDescription: alert.description,
             alertSeverity: alert.severity,
-            date: alert.dateCreated,
+            date: timestamp,
             groupId: group._id.toString(),
             groupName: group.title,
-            submittedBy: alert.submittedBy ?? "Unknown"
+            submittedBy: alert.userDetails.name ?? "Unknown"
         }
         })
       );
     // sort the alerts by most recent
-    groupAlerts.sort((a, b) => a.date.getTime() - b.date.getTime());
+    groupAlerts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
     return {
         userAlerts: groupAlerts

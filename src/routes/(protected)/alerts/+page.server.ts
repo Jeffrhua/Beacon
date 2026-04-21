@@ -21,7 +21,8 @@ export const load: PageServerLoad = async ({locals}) => {
             date: timestamp,
             groupId: group._id.toString(),
             groupName: group.title,
-            submittedBy: alert.userDetails.name ?? "Unknown"
+            submittedBy: alert.userDetails.name ?? "Unknown",
+            submittedId: alert.user_id.toString()
         }
         })
       );
@@ -29,6 +30,7 @@ export const load: PageServerLoad = async ({locals}) => {
     groupAlerts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
     return {
+        userId: userId.toString(),
         userAlerts: groupAlerts
     }
 } 

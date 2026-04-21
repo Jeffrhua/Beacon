@@ -6,6 +6,8 @@
 	let { data } = $props();
 	let items = data.userAlerts;
   let searchTerm = $state("");
+  let userSearchTerm = $state("");
+
 
   // function to filter items for the sear
 	let filteredItems = $derived.by(() =>
@@ -15,6 +17,15 @@
 				item.alertTitle.toLowerCase().includes(searchTerm.toLowerCase()),
 		),
 	);
+
+  // function to filter items for the specific user
+	let userFilteredItems = $derived.by(() =>
+		items.filter(
+			(item) =>
+        item?.submittedId === data.userId &&
+				(!userSearchTerm || item.alertTitle.toLowerCase().includes(userSearchTerm.toLowerCase())),
+		),
+	);
 </script>
 
 <div class="md:hidden p-3">
@@ -22,6 +33,15 @@
         type="text" 
         placeholder="Search by Alert name" 
         bind:value={searchTerm}
+        class="w-full px-4 py-2 rounded-lg border border-gray-600 dark:bg-gray-800 dark:text-white"
+    />
+</div>
+
+<div class="md:hidden p-3">
+    <input 
+        type="text" 
+        placeholder="Search by Alert name" 
+        bind:value={userSearchTerm}
         class="w-full px-4 py-2 rounded-lg border border-gray-600 dark:bg-gray-800 dark:text-white"
     />
 </div>
@@ -45,6 +65,9 @@
 </div>
 
 <div class="desktop-table overflow-x-auto w-full">
+  <h2 class="text-3xl font-bold mt-4 pl-4">
+    All Alerts
+  </h2>
   <!-- Create a Table with information about every alert -->
 	<TableSearch placeholder="Search by Alert name" hoverable bind:inputValue={searchTerm}>
   <TableHead>
@@ -56,18 +79,59 @@
     <TableHeadCell>Submitted By</TableHeadCell>
   </TableHead>
   <TableBody>
-    {#each filteredItems as item}
-      <TableBodyRow>
-        <TableBodyCell>{item?.alertCreated}</TableBodyCell>
-        <TableBodyCell>{item?.alertTitle}</TableBodyCell>
-        <TableBodyCell>{item?.alertDescription}</TableBodyCell>
-        <TableBodyCell><a href="/groups/{item?.groupId}">{item?.groupName}</a></TableBodyCell>
-        <TableBodyCell>
-          <SeverityBadge severity={item?.alertSeverity}/>
-        </TableBodyCell>
-        <TableBodyCell>{item?.submittedBy ?? "Unknown"}</TableBodyCell>
-      </TableBodyRow>
-    {/each}
+    {#if filteredItems.length == 0}
+    <TableBodyCell colspan={6} class="text-center">No alerts found...</TableBodyCell>
+    {:else}
+      {#each filteredItems as item}
+        <TableBodyRow>
+          <TableBodyCell>{item?.alertCreated}</TableBodyCell>
+          <TableBodyCell>{item?.alertTitle}</TableBodyCell>
+          <TableBodyCell>{item?.alertDescription}</TableBodyCell>
+          <TableBodyCell><a href="/groups/{item?.groupId}">{item?.groupName}</a></TableBodyCell>
+          <TableBodyCell>
+            <SeverityBadge severity={item?.alertSeverity}/>
+          </TableBodyCell>
+          <TableBodyCell>{item?.submittedBy ?? "Unknown"}</TableBodyCell>
+        </TableBodyRow>
+      {/each}
+    {/if}
+  </TableBody>
+</TableSearch>
+</div>
+
+<hr class="border-t mt-8">
+
+<div class="desktop-table overflow-x-auto w-full">
+  <h2 class="text-3xl font-bold mt-4 pl-4">
+    My Alerts
+  </h2>
+  <!-- Create a Table with information about every alert -->
+	<TableSearch placeholder="Search by Alert name" hoverable bind:inputValue={userSearchTerm}>
+  <TableHead>
+    <TableHeadCell>Created</TableHeadCell>
+    <TableHeadCell>Title</TableHeadCell>
+    <TableHeadCell>Description</TableHeadCell>
+    <TableHeadCell>Group</TableHeadCell>
+    <TableHeadCell>Severity</TableHeadCell>
+    <TableHeadCell>Submitted By</TableHeadCell>
+  </TableHead>
+  <TableBody>
+    {#if userFilteredItems.length == 0}
+    <TableBodyCell colspan={6} class="text-center">No alerts found...</TableBodyCell>
+    {:else}
+      {#each userFilteredItems as item}
+        <TableBodyRow>
+          <TableBodyCell>{item?.alertCreated}</TableBodyCell>
+          <TableBodyCell>{item?.alertTitle}</TableBodyCell>
+          <TableBodyCell>{item?.alertDescription}</TableBodyCell>
+          <TableBodyCell><a href="/groups/{item?.groupId}">{item?.groupName}</a></TableBodyCell>
+          <TableBodyCell>
+            <SeverityBadge severity={item?.alertSeverity}/>
+          </TableBodyCell>
+          <TableBodyCell>{item?.submittedBy ?? "Unknown"}</TableBodyCell>
+        </TableBodyRow>
+      {/each}
+    {/if}
   </TableBody>
 </TableSearch>
 </div>

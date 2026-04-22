@@ -9,7 +9,7 @@
   const { data } = $props();
   const user = data.user ?? { displayName: "", name: "", profileDescription: "", phoneNumber: "" };
 
-  let currentSection = $state<"profile" | "accessibility" | "security" | "terms" | "appearance">("profile");
+  let currentSection = $state<"profile" | "accessibility" | "security" | "terms" | "notifications">("profile");
   
   let fontSize = $state<'small' | 'medium' | 'large' | 'xlarge'>('medium');
   let themeBtn = $state("light");
@@ -20,6 +20,8 @@
 
   let speechSynthesis: SpeechSynthesis | null = null;
   let isReading = $state(false);
+
+  let modes = $state<"Do Not Disturb" | "Silent" | "Vibrate"> ("Do Not Disturb");
 
   onMount(() => {
     fontSize = (localStorage.getItem('fontSize') as any) || 'medium';
@@ -166,7 +168,7 @@
           value={currentSection}
       >
           <option value="profile">Profile</option>
-          <option value="appearance">Appearance</option>
+          <option value="notifications">Notifications</option>
           <option value="accessibility">Accessibility</option>
           <option value="security">Privacy & Security</option>
           <option value="terms">Terms of Service</option>
@@ -183,7 +185,7 @@
           <UserSolid class="shrink-0 h-6 w-6 " />
         {/snippet}
       </SidebarItem>
-      <SidebarItem label="Appearance" onclick={() => currentSection = "appearance"} class="cursor-pointer">
+      <SidebarItem label="Notifications" onclick={() => currentSection = "notifications"} class="cursor-pointer">
         {#snippet icon()}
           <EyeSolid class="shrink-0 h-6 w-6" />
         {/snippet}
@@ -404,6 +406,26 @@
           You accepted these terms on <span class="font-medium">{new Date(data.user?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>.
         </p>
       </div>
+      {/if}
+
+      {#if currentSection === "notifications"}
+        <div class="space-y-6">
+          <h2 class="text-xl font-semibold mb-2">Notification Modes</h2>
+
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
+              <input type="radio" bind:group={modes} value="Do Not Disturb" class="w-4 h-4" />
+              <span>Do Not Disturb</span>
+            </Label>
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
+              <input type="radio" bind:group={modes} value="Silent" class="w-4 h-4" />
+              <span>Silent</span>
+            </Label>
+            <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
+              <input type="radio" bind:group={modes} value="Vibrate" class="w-4 h-4" />
+              <span>Vibrate</span>
+            </Label>
+
+        </div>
       {/if}
       
     </div>

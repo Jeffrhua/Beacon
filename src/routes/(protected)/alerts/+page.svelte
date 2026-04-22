@@ -2,8 +2,10 @@
 	import { TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, TableSearch } from "flowbite-svelte";
   import {page} from '$app/state';
   import SeverityBadge from "$lib/components/SeverityBadge.svelte";
+  import EscalateAlertModal from "$lib/components/EscalateAlertModal.svelte";
 
 	let { data } = $props();
+  let escalationModal = $state(false);
 	let items = data.userAlerts;
   let searchTerm = $state("");
   let userSearchTerm = $state("");
@@ -102,9 +104,18 @@
 <hr class="border-t mt-8">
 
 <div class="desktop-table overflow-x-auto w-full">
-  <h2 class="text-3xl font-bold mt-4 pl-4">
-    My Alerts
-  </h2>
+  <div class="flex justify-between">
+    <h2 class="text-3xl font-bold mt-4 pl-4">
+      My Alerts
+    </h2>
+    <button onclick={() => (escalationModal = true)} class="text-white mt-4 mr-4 rounded">
+        Escalate Alert
+    </button>
+    <EscalateAlertModal
+      bind:escalationModal
+      alerts = {userFilteredItems}
+    ></EscalateAlertModal>
+  </div>
   <!-- Create a Table with information about every alert -->
 	<TableSearch placeholder="Search by Alert name" hoverable bind:inputValue={userSearchTerm}>
   <TableHead>

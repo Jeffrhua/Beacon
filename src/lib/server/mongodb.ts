@@ -1,6 +1,6 @@
 import { ObjectId, type Db } from 'mongodb';
 import { client } from './auth'
-import type { GroupDb, UserDb, AlertDb, Alert } from '$lib/types';
+import type { GroupDb, UserDb, AlertDb, Alert} from '$lib/types';
 import { alertDbToAlert } from '$lib/db-type-conversions';
 
 const GroupRoles = ["owner", "admin", "moderator", "member"]
@@ -542,4 +542,25 @@ export async function getAllMsgs(conversationId: ObjectId){
   }).sort({ createdAt: 1 }).toArray();
 
   return msgs;
+}
+
+// Update an alert's severity level
+export async function updateAlertSeverity(alerts: { _id: string; alertSeverity: string }[]) {
+  if (alerts.length === 0) return;
+
+  const db = await ensureDb();
+
+  // Batch update requests
+  const operations = alerts.map((alert) => ({
+    updateOne: {
+      filter: { _id: new ObjectId(alert._id) },
+      update: {
+        $set: {
+          severity: alert.alertSeverity
+        }
+      }
+    }
+  }));
+
+  await db.collection("alert").bulkWrite(operations);
 }

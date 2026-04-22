@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import type { PageServerLoad } from "./$types";
 import { getAllUserAlerts, getGroupFromAlert } from "$lib/server/mongodb";
 import { formatDate } from "$lib/utils";
-import type { Alert } from "$lib/types";
+import { AlertActions } from "$lib/server/actions/AlertActions";
 
 export const load: PageServerLoad = async ({locals}) => {
     const userId = new ObjectId(locals.user.id);
@@ -14,6 +14,7 @@ export const load: PageServerLoad = async ({locals}) => {
             const group = await getGroupFromAlert(new ObjectId(alert._id));
             if(!group) return;
             return {
+            alertId: alert._id.toString(),
             alertTitle: alert.title,
             alertCreated: formatDate(timestamp),
             alertDescription: alert.description,
@@ -34,3 +35,5 @@ export const load: PageServerLoad = async ({locals}) => {
         userAlerts: groupAlerts
     }
 } 
+
+export const actions = AlertActions;

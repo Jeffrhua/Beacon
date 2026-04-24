@@ -69,7 +69,6 @@
 
     async function submitIncident() {
         if (!incidentForm.description) { alert('Please enter a description'); return; }
-        if (!incidentForm.groupId)     { alert('Please select a group'); return; }
 
         const fd = new FormData();
         fd.append('lat',         incidentForm.lat);
@@ -150,7 +149,6 @@
                     name="groupId"
                     bind:value={incidentForm.groupId}
                     style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                    required
                 >
                     <option value="">Select a group...</option>
                     {#each data.groups as group}

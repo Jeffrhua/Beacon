@@ -1,6 +1,6 @@
 <script lang="ts">
     import { BottomNav, BottomNavItem } from 'flowbite-svelte';
-    import { HomeSolid, BellSolid, UsersGroupSolid, GlobeSolid, CogSolid, MapPinSolid, MessagesSolid, UsersSolid } from 'flowbite-svelte-icons';
+    import { HomeSolid, BellSolid, UsersGroupSolid, GlobeSolid, CogSolid, MapPinSolid, MessagesSolid, UsersSolid, ShareNodesSolid } from 'flowbite-svelte-icons';
     import { page } from "$app/state";
     let activeUrl = $derived(page.url.pathname);
     let moreOpen = $state(false);
@@ -17,6 +17,9 @@
         </a>
         <a href="/friends" onclick={() => moreOpen = false} class="flex items-center gap-3 px-4 py-3" style="color: white !important;">
             <UsersSolid class="shrink-0 h-6 w-6" /> <span>Friends</span>
+        </a>
+        <a href="/location-sharing" onclick={() => moreOpen = false} class="flex items-center gap-3 px-4 py-3" style="color: white !important;">
+            <ShareNodesSolid class="shrink-0 h-6 w-6" /> <span>Location Sharing</span>
         </a>
         <a href="/settings" onclick={() => moreOpen = false} class="flex items-center gap-3 px-4 py-3" style="color: white !important;">
             <CogSolid class="shrink-0 h-6 w-6" /> <span>Settings</span>

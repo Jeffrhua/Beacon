@@ -544,6 +544,177 @@ export async function getAllMsgs(conversationId: ObjectId){
   return msgs;
 }
 
+// ─── Escalation ──────────────────────────────────────────────────────────────
+
+const SEVERITY_ORDER = ['low', 'medium', 'high', 'critical'];
+
+function normalizeSeverity(s: string): string {
+  return s === 'moderate' ? 'medium' : s;
+}
+
+export async function createEscalationRecord(alertId: ObjectId, severity: string) {
+  const db = await ensureDb();
+  const normalized = normalizeSeverity(severity);
+  await db.collection('alert_escalation').insertOne({
+    alert_id: alertId,
+    autoEscalate: true,
+    escalateAfterMinutes: 30,
+    baseSeverity: normalized,
+    currentSeverity: normalized,
+    lastEscalatedAt: new Date(),
+    escalationCount: 0,
+    acknowledgedBy: [],
+    ackThreshold: 5,
+    resolved: false,
+    resolvedBy: null,
+    resolvedAt: null,
+    history: [{ severity: normalized, reason: 'created', at: new Date() }]
+  });
+}
+
+export async function getEscalationRecord(alertId: ObjectId) {
+  const db = await ensureDb();
+  return db.collection('alert_escalation').findOne({ alert_id: alertId });
+}
+
+export async function getEscalationRecords(alertIds: ObjectId[]) {
+  const db = await ensureDb();
+  return db.collection('alert_escalation').find({ alert_id: { $in: alertIds } }).toArray();
+}
+
+export async function evaluateEscalation(alertId: ObjectId): Promise<void> {
+  const db = await ensureDb();
+  const record = await db.collection('alert_escalation').findOne({ alert_id: alertId });
+  if (!record || record.resolved || !record.autoEscalate) return;
+
+  const minutesSince = (Date.now() - new Date(record.lastEscalatedAt).getTime()) / 60_000;
+  if (minutesSince < record.escalateAfterMinutes) return;
+
+  const idx = SEVERITY_ORDER.indexOf(record.currentSeverity);
+  if (idx === -1 || idx >= SEVERITY_ORDER.length - 1) return;
+
+  const newSeverity = SEVERITY_ORDER[idx + 1];
+  const now = new Date();
+
+  await db.collection('alert_escalation').updateOne(
+    { alert_id: alertId },
+    {
+      $set: { currentSeverity: newSeverity, lastEscalatedAt: now, escalationCount: record.escalationCount + 1 },
+      $push: { history: { severity: newSeverity, reason: 'time', at: now } }
+    }
+  );
+
+  await db.collection('alert').updateOne({ _id: alertId }, { $set: { severity: newSeverity } });
+}
+
+export async function acknowledgeAlertEscalation(alertId: ObjectId, userId: ObjectId): Promise<void> {
+  const db = await ensureDb();
+
+  const record = await db.collection('alert_escalation').findOneAndUpdate(
+    { alert_id: alertId, acknowledgedBy: { $ne: userId } },
+    { $push: { acknowledgedBy: userId } },
+    { returnDocument: 'after' }
+  );
+
+  if (!record || record.resolved) return;
+
+  const ackCount = record.acknowledgedBy.length;
+  if (ackCount < record.ackThreshold) return;
+
+  const idx = SEVERITY_ORDER.indexOf(record.currentSeverity);
+  if (idx === -1 || idx >= SEVERITY_ORDER.length - 1) return;
+
+  const newSeverity = SEVERITY_ORDER[idx + 1];
+  const now = new Date();
+
+  await db.collection('alert_escalation').updateOne(
+    { alert_id: alertId },
+    {
+      $set: { currentSeverity: newSeverity, lastEscalatedAt: now, escalationCount: record.escalationCount + 1, acknowledgedBy: [] },
+      $push: { history: { severity: newSeverity, reason: 'acknowledgment', at: now } }
+    }
+  );
+
+  await db.collection('alert').updateOne({ _id: alertId }, { $set: { severity: newSeverity } });
+}
+
+export async function resolveAlertEscalation(alertId: ObjectId, userId: ObjectId): Promise<void> {
+  const db = await ensureDb();
+  const record = await db.collection('alert_escalation').findOne({ alert_id: alertId });
+  if (!record) return;
+
+  const now = new Date();
+  await db.collection('alert_escalation').updateOne(
+    { alert_id: alertId },
+    {
+      $set: { resolved: true, resolvedBy: userId, resolvedAt: now },
+      $push: { history: { severity: record.currentSeverity, reason: 'resolved', at: now } }
+    }
+  );
+}
+
+// ─── Location Sharing ─────────────────────────────────────────────────────────
+
+export async function upsertLocationShare(
+  userId: ObjectId,
+  data: { latitude: number; longitude: number; accuracy: number; sharingWith: ObjectId[]; isActive: boolean }
+) {
+  const db = await ensureDb();
+  await db.collection('location_share').updateOne(
+    { user_id: userId },
+    { $set: { ...data, user_id: userId, updatedAt: new Date() } },
+    { upsert: true }
+  );
+}
+
+export async function getLocationShare(userId: ObjectId) {
+  const db = await ensureDb();
+  return db.collection('location_share').findOne({ user_id: userId });
+}
+
+export async function stopLocationShare(userId: ObjectId) {
+  const db = await ensureDb();
+  await db.collection('location_share').updateOne(
+    { user_id: userId },
+    { $set: { isActive: false, updatedAt: new Date() } }
+  );
+}
+
+export async function updateLocationCoords(userId: ObjectId, latitude: number, longitude: number, accuracy: number) {
+  const db = await ensureDb();
+  await db.collection('location_share').updateOne(
+    { user_id: userId },
+    { $set: { latitude, longitude, accuracy, updatedAt: new Date() } }
+  );
+}
+
+export async function getFriendsSharedLocations(userId: ObjectId) {
+  const db = await ensureDb();
+  return db.collection('location_share').aggregate([
+    { $match: { isActive: true, sharingWith: userId } },
+    {
+      $lookup: {
+        from: 'user',
+        localField: 'user_id',
+        foreignField: '_id',
+        as: 'userDetails'
+      }
+    },
+    { $unwind: '$userDetails' },
+    {
+      $project: {
+        _id: 0,
+        id: { $toString: '$user_id' },
+        name: '$userDetails.name',
+        latitude: 1,
+        longitude: 1,
+        accuracy: 1,
+        updatedAt: 1
+      }
+    }
+  ]).toArray();
+}
+
 // Update an alert's severity level
 export async function updateAlertSeverity(alerts: { _id: string; alertSeverity: string }[]) {
   if (alerts.length === 0) return;

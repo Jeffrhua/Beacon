@@ -62,3 +62,41 @@ export type Message = {
   sender_id: string,
   content: string
 }
+
+export type LocationShareDb = {
+  user_id: ObjectId,
+  latitude: number,
+  longitude: number,
+  accuracy: number,
+  sharingWith: ObjectId[],
+  isActive: boolean,
+  updatedAt: Date
+}
+
+export type SharedLocation = {
+  id: string,
+  name: string,
+  latitude: number,
+  longitude: number,
+  accuracy: number,
+  updatedAt: Date
+}
+
+export type EscalationEvent = {
+  severity: string,
+  reason: 'created' | 'time' | 'acknowledgment' | 'manual' | 'resolved',
+  at: Date,
+  byName?: string
+}
+
+export type EscalationInfo = {
+  escalationCount: number,
+  baseSeverity: string,
+  resolved: boolean,
+  ackCount: number,
+  ackThreshold: number,
+  hasAcknowledged: boolean,
+  autoEscalate: boolean,
+  escalateAfterMinutes: number,
+  history: EscalationEvent[]
+}

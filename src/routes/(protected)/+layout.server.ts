@@ -4,7 +4,9 @@ import { getAllUserAlerts, getGroupFromAlert } from "$lib/server/mongodb";
 import { formatDate } from "$lib/utils";
 import type { Alert } from "$lib/types";
 
-export const load: LayoutServerLoad = async ({locals}) => {
+export const load: LayoutServerLoad = async ({locals, depends}) => {
+    depends("app:alerts");
+    
     const userId = new ObjectId(locals.user.id);
     const userAlerts : Alert[] = await getAllUserAlerts(userId);
     const groupAlerts = await Promise.all(

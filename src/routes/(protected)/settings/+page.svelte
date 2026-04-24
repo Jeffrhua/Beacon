@@ -21,7 +21,7 @@
   let speechSynthesis: SpeechSynthesis | null = null;
   let isReading = $state(false);
 
-  let modes = $state<"Do Not Disturb" | "Silent" | "Vibrate"> ("Do Not Disturb");
+  let modes = $state<"Do Not Disturb" | "Silent" | "Allow All"> ("Do Not Disturb");
 
   onMount(() => {
     fontSize = (localStorage.getItem('fontSize') as any) || 'medium';
@@ -29,6 +29,7 @@
     focusIndicators = localStorage.getItem('focusIndicators') !== 'false';
     dyslexiaFont = localStorage.getItem('dyslexiaFont') === 'true';
     textToSpeech = localStorage.getItem('textToSpeech') === 'true';
+    modes = (localStorage.getItem('notificationMode') as "Do Not Disturb" | "Silent" | "Allow All") || "Do Not Disturb";
     themeBtn = $theme
     
     applyFontSize();
@@ -43,6 +44,10 @@
       speechSynthesis = window.speechSynthesis;
     }
   });
+
+  function applyNotificationMode() {
+    localStorage.setItem('notificationMode', modes);
+  }
 
   function applyFontSize() {
     const sizes = {
@@ -230,7 +235,7 @@
           </div>
           <div class="flex flex-col">
             <Label for="phone_number" class="mb-2">Phone Number</Label>
-            <PhoneInput name="phone_number" defaultValue={user.phoneNumber} placeholder="123-456-7890"/>
+            <PhoneInput name="phone_number" defaultValue={user.phoneNumber} phoneIcon={false} placeholder="123-456-7890"/>
           </div>
         </div>
         <Button type="submit">Save Changes</Button>
@@ -413,16 +418,16 @@
           <h2 class="text-xl font-semibold mb-2">Notification Modes</h2>
 
             <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
-              <input type="radio" bind:group={modes} value="Do Not Disturb" class="w-4 h-4" />
+              <input type="radio" bind:group={modes} value="Do Not Disturb" onchange={applyNotificationMode} class="w-4 h-4" />
               <span>Do Not Disturb</span>
             </Label>
             <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
-              <input type="radio" bind:group={modes} value="Silent" class="w-4 h-4" />
+              <input type="radio" bind:group={modes} value="Silent" onchange={applyNotificationMode} class="w-4 h-4" />
               <span>Silent</span>
             </Label>
             <Label class="flex items-center space-x-3 cursor-pointer p-3 dark:hover:bg-[#222326] rounded">
-              <input type="radio" bind:group={modes} value="Vibrate" class="w-4 h-4" />
-              <span>Vibrate</span>
+              <input type="radio" bind:group={modes} value="Allow All" onchange={applyNotificationMode} class="w-4 h-4" />
+              <span>Allow All</span>
             </Label>
 
         </div>

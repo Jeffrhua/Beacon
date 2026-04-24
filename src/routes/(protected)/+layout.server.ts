@@ -9,13 +9,13 @@ export const load: LayoutServerLoad = async ({locals}) => {
     const userAlerts : Alert[] = await getAllUserAlerts(userId);
     const groupAlerts = await Promise.all(
         userAlerts.map(async (alert) => {
-            const group = await getGroupFromAlert(new ObjectId(alert.id));
+            const group = await getGroupFromAlert(new ObjectId(alert._id));
             if(!group) return;
             return {
             alertTitle: alert.title,
-            alertCreated: formatDate(alert.dateCreated),
+            alertCreated: formatDate(new ObjectId(alert._id).getTimestamp()),
             alertSeverity: alert.severity,
-            date: alert.dateCreated,
+            date: new ObjectId(alert._id).getTimestamp(),
             groupId: group._id.toString(),
             groupName: group.title
         }

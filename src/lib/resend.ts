@@ -3,7 +3,13 @@ import { RESEND_KEY } from '$env/static/private';
 import type { Alert, GroupDb } from './types';
 import { getUser } from './server/mongodb';
 import { ObjectId } from 'mongodb';
-const resend = new Resend(RESEND_KEY);
+
+let _resend: Resend | null = null;
+function getResend() {
+  if (!RESEND_KEY) return null;
+  if (!_resend) _resend = new Resend(RESEND_KEY);
+  return _resend;
+}
 // define a resendObject type to avoid typescript issues
 type resendObject = {
   from: string,
@@ -31,6 +37,8 @@ export async function sendAlertEmail(emails : string[], alert: Alert, group: Gro
           <p><b>Alert id:</b> ${alert.id}</p>
           `
       }))
+      const resend = getResend();
+      if (!resend) { console.warn('RESEND_KEY not set — skipping email send'); return; }
       await resend.batch.send(emailsToSend);
     }
 

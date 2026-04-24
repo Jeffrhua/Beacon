@@ -50,7 +50,6 @@ export const actions: Actions = {
         const severity    = (formData.get('severity') as string) || 'low';
 
         if (!description) return fail(400, { error: 'Description is required' });
-        if (!groupId)     return fail(400, { error: 'Please select a group' });
 
         // Convert photo to base64 if provided
         let photoData: string | null = null;
@@ -82,24 +81,24 @@ export const actions: Actions = {
             createdAt: now
         });
 
-        // Save alert — kept like original so validator never rejects
-        const mainDb   = client.db('main');
-        const alertRes = await mainDb.collection('alert').insertOne({
-            title:       'New Incident Reported',
-            description: description,
-            severity:    'medium',
-            longitude:   lng,
-            latitude:    lat,
-            address:     address,
-            user_id:     new ObjectId(userId),
-            submittedBy: submittedBy
-        });
+        if (groupId) {
+            const mainDb   = client.db('main');
+            const alertRes = await mainDb.collection('alert').insertOne({
+                title:       'New Incident Reported',
+                description: description,
+                severity:    'medium',
+                longitude:   lng,
+                latitude:    lat,
+                address:     address,
+                user_id:     new ObjectId(userId),
+                submittedBy: submittedBy
+            });
 
-        // Link alert to group
-        await mainDb.collection('alert_group').insertOne({
-            group_id: new ObjectId(groupId),
-            alert_id: alertRes.insertedId
-        });
+            await mainDb.collection('alert_group').insertOne({
+                group_id: new ObjectId(groupId),
+                alert_id: alertRes.insertedId
+            });
+        }
 
         return { success: true };
     }

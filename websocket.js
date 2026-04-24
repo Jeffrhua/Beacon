@@ -12,6 +12,7 @@ async function startServer() {
   await mongoClient.connect();
   const db = mongoClient.db("main")
   const messagesCollection = db.collection("conversation_message")
+  const locationCollection = db.collection("location_share")
   console.log("MongoDB connected...")
 
   wss.on('connection', function connection(ws) {
@@ -52,6 +53,51 @@ async function startServer() {
               conversation_id: message.conversation_id,
               from: message.from,
               text: message.text
+            }));
+          }
+        }
+      }
+
+      if (message.type === 'location_update') {
+        if (!ws.userId) return;
+
+        const { latitude, longitude, accuracy, to } = message;
+
+        await locationCollection.updateOne(
+          { user_id: new ObjectId(ws.userId) },
+          { $set: { latitude, longitude, accuracy, updatedAt: new Date() } }
+        );
+
+        for (const userId of to) {
+          const targetSocket = clients.get(userId);
+          if (targetSocket && targetSocket.readyState === WebSocket.OPEN) {
+            targetSocket.send(JSON.stringify({
+              type: 'location_update',
+              from: ws.userId,
+              latitude,
+              longitude,
+              accuracy
+            }));
+          }
+        }
+      }
+
+      if (message.type === 'location_stop') {
+        if (!ws.userId) return;
+
+        const { to } = message;
+
+        await locationCollection.updateOne(
+          { user_id: new ObjectId(ws.userId) },
+          { $set: { isActive: false, updatedAt: new Date() } }
+        );
+
+        for (const userId of to) {
+          const targetSocket = clients.get(userId);
+          if (targetSocket && targetSocket.readyState === WebSocket.OPEN) {
+            targetSocket.send(JSON.stringify({
+              type: 'location_stop',
+              from: ws.userId
             }));
           }
         }

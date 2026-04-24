@@ -5,6 +5,7 @@ import * as mon from "$lib/server/mongodb";
 import type { GroupDb, Alert, User, AlertDb } from '$lib/types';
 import { sendAlertEmail } from '$lib/resend';
 import { alertDbToAlert } from '$lib/db-type-conversions';
+import { createEscalationRecord } from '$lib/server/mongodb';
 
 export const GroupActions = {
     sendAlert: async ({ request, params, locals }) => {
@@ -53,6 +54,8 @@ export const GroupActions = {
             group_id: new ObjectId(groupId),
             alert_id: new ObjectId(newAlertId),
         })
+
+        await createEscalationRecord(newAlertId, severity);
 
         // Send email to all users of this group
         const users = await mon.getUsersFromGroup(new ObjectId(groupId));

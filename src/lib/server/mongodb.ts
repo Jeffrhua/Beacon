@@ -701,6 +701,7 @@ export async function getFriendsSharedLocations(userId: ObjectId) {
       }
     },
     { $unwind: '$userDetails' },
+    { $match: { 'userDetails.locationSharing': { $ne: false } } },
     {
       $project: {
         _id: 0,

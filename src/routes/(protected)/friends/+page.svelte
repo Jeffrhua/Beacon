@@ -18,7 +18,7 @@
   );
 </script>
 
-<div class="w-full h-full flex flex-row justify-center">
+<div class="w-full h-full flex flex-col md:flex-row justify-center gap-4 p-4">
   <!-- Friends List -->
   <Card class="p-4 sm:p-8 md:p-10 h-full" size="md">
     <div class="mb-4 flex items-center justify-between">

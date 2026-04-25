@@ -60,14 +60,6 @@
 		class="w-full px-4 py-2 rounded-lg border border-gray-600 dark:bg-gray-800 dark:text-white"
 	/>
 </div>
-<div class="md:hidden p-3">
-	<input
-		type="text"
-		placeholder="Search by Alert name"
-		bind:value={userSearchTerm}
-		class="w-full px-4 py-2 rounded-lg border border-gray-600 dark:bg-gray-800 dark:text-white"
-	/>
-</div>
 
 <!-- ─── Mobile cards ──────────────────────────────────────────────────── -->
 <div class="mobile-cards md:hidden flex flex-col gap-3 px-3 pb-20">
@@ -116,6 +108,66 @@
 		</div>
 	{/each}
 </div>
+
+<!-- Mobile: My Alerts -->
+<div class="mobile-cards md:hidden px-3 pb-4">
+    <div class="flex items-center justify-between mb-3">
+        <h2 class="text-2xl font-bold">My Alerts</h2>
+        <button onclick={() => (escalationModal = true)} class="text-xs px-3 py-1 rounded" style="background-color: #dc2626 !important; color: white !important; border: none !important; box-shadow: none !important; transform: none !important;">
+            Escalate Alert
+        </button>
+        <EscalateAlertModal bind:escalationModal alerts={userFilteredItems} />
+    </div>
+    <input
+        type="text"
+        placeholder="Search by Alert name"
+        bind:value={userSearchTerm}
+        class="w-full px-4 py-2 rounded-lg border border-gray-600 dark:bg-gray-800 dark:text-white mb-3"
+    />
+    {#each userFilteredItems as item}
+        <div class="rounded-lg p-4 mb-3" style="background-color: #1f1f1f; border: 1px solid #3a1a1a;">
+            <div class="flex items-center justify-between mb-2">
+                <span class="font-semibold text-white">{item?.alertTitle}</span>
+                <div class="flex items-center gap-1">
+                    <SeverityBadge severity={item?.alertSeverity} />
+                    {#if item?.escalation?.escalationCount > 0}
+                        <span class="text-xs text-orange-400 font-bold">↑{item.escalation.escalationCount}</span>
+                    {/if}
+                    {#if item?.escalation?.resolved}
+                        <span class="text-xs text-green-400 font-bold">✓ Resolved</span>
+                    {/if}
+                </div>
+            </div>
+            <p class="text-sm text-gray-400 mb-2">{item?.alertDescription}</p>
+            <div class="flex items-center justify-between text-xs text-gray-500">
+                <a href="/groups/{item?.groupId}" style="color: #e84040 !important;">{item?.groupName}</a>
+                <span>{item?.alertCreated}</span>
+            </div>
+            {#if item?.escalation && !item.escalation.resolved}
+                <div class="mt-2 flex gap-2">
+                    {#if !item.escalation.hasAcknowledged}
+                        <form method="POST" action="?/acknowledgeAlert" use:enhance={() => async ({ update }) => { await update(); }}>
+                            <input type="hidden" name="alertId" value={item.alertId} />
+                            <button type="submit" class="text-xs px-2 py-1 rounded bg-yellow-600 text-white hover:bg-yellow-700">
+                                Acknowledge ({item.escalation.ackCount}/{item.escalation.ackThreshold})
+                            </button>
+                        </form>
+                    {:else}
+                        <span class="text-xs text-yellow-400">Acknowledged</span>
+                    {/if}
+                    <form method="POST" action="?/resolveAlert" use:enhance={() => async ({ update }) => { await update(); }}>
+                        <input type="hidden" name="alertId" value={item.alertId} />
+                        <button type="submit" class="text-xs px-2 py-1 rounded bg-green-700 text-white hover:bg-green-800">
+                            Resolve
+                        </button>
+                    </form>
+                </div>
+            {/if}
+        </div>
+    {/each}
+</div>
+
+
 
 <!-- ─── Desktop: All Alerts ───────────────────────────────────────────── -->
 <div class="desktop-table overflow-x-auto w-full">

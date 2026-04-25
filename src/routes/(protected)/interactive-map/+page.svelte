@@ -248,24 +248,32 @@
         </form>
     </div>
 {/if}
-
-<div bind:this={mapContainer} style="height: 600px; width: 600px; margin: 0 auto; border: 2px solid black;"></div>
-
-<div style="text-align: center; margin-top: 20px;">
-    <button
-        on:click={startAddingIncident}
-        style="padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer;"
-        disabled={addingIncident}
-    >
-        {addingIncident ? 'Click on map...' : 'Add Incident'}
-    </button>
+<div style="padding: 0 10px;">
+    <div bind:this={mapContainer} class="map-container"></div>
+    <div style="text-align: center; margin-top: 20px;">
+        <button
+            on:click={startAddingIncident}
+            style="padding: 10px 20px; background-color: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer;"
+            disabled={addingIncident}
+        >
+            {addingIncident ? 'Click on map...' : 'Add Incident'}
+        </button>
+    </div>
 </div>
-
 <style>
-    :global(.leaflet-container) {
-        height: 100%;
-        width: 100%;
+  .map-container {
+    height: 600px;
+    width: 600px;
+    margin: 0 auto;
+    border: 2px solid black;
+  }
+
+  @media (max-width: 768px) {
+    .map-container {
+      height: 350px;
+      width: 350px;
     }
+  }
 </style>
 
 

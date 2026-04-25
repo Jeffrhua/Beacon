@@ -36,14 +36,18 @@ export const actions = {
         const form = await request.formData();
         const user = locals.user;
         const userId = user.id;
+
         const emergencyContactName = form.get('emergency_contact_name')?.toString().trim() ?? "";
         const emergencyContactPhone = form.get('emergency_contact_phone')?.toString().trim() ?? "";
         const displayName = form.get('display_name')?.toString().trim();
         const profileDescription = form.get("profile_description")?.toString().trim() ?? "";
         const phoneNumber = form.get("phone_number")?.toString().trim() ?? "";
-
-        const db = client.db('main')
-        const res = await db.collection('user').updateOne(
+        const status = form.get("status")?.toString().trim() ?? "";
+        if (status.length > 50) {
+            return fail(400, { success: false, message: "Status must be 50 characters or less." });
+        }
+        const db = client.db('main');
+        await db.collection('user').updateOne(
             { _id: new ObjectId(userId) },
             {
                 $set: {
@@ -51,12 +55,14 @@ export const actions = {
                     profileDescription: profileDescription,
                     phoneNumber: phoneNumber,
                     emergencyContactName: emergencyContactName,
-                    emergencyContactPhone: emergencyContactPhone
+                    emergencyContactPhone: emergencyContactPhone,
+                    status: status
                 }
             },
             { upsert: true }
-        )
-        return { success: true, message: 'yayyy!!!' }
+        );
+
+        return { success: true, message: 'yayyy!!!' };
     },
 
     deleteAccount: async ({ request, locals }) => {

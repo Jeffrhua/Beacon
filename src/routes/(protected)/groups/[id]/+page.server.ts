@@ -29,7 +29,7 @@ export const load = async ({params, locals}) => {
     // Load users in current group
     let users = [];
     groupUsers.forEach((u)=>{
-        users.push({id: u._id.toString(), name: u.name, displayName: u.displayName, role: u.role})
+        users.push({id: u._id.toString(), name: u.name, displayName: u.displayName, role: u.role, status: u.status})
     })
     const {_id, owner_id, ...r} = group;
 

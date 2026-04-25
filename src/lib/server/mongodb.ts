@@ -736,3 +736,14 @@ export async function updateAlertSeverity(alerts: { _id: string; alertSeverity: 
 
   await db.collection("alert").bulkWrite(operations);
 }
+
+export async function updateUserStatus(userId: ObjectId, newStatus: string) {
+  const db = await ensureDb();
+  if (newStatus.length > 50) {
+    return;
+  }
+  await db.collection('user').updateOne(
+    { _id: userId },
+    { $set: { status: newStatus} }
+  );
+}

@@ -305,7 +305,7 @@
   };
 </script>
 
-<div class="grid h-full grid-cols-1 md:grid-cols-[75%_1fr] gap-2">
+<div class="grid h-full grid-cols-1 md:grid-cols-[70%_1fr] gap-2">
   <div class="p-4 space-y-4">
     {#if data.group}
       <div>
@@ -341,40 +341,39 @@
     </div>
   </div>
 
-  <div class="flex flex-col m-2 gap-3 overflow-x-hidden">
-    <Card class="p-4 w-full max-w-none">
-      <div class="flex items-center">
-        <h5
-          class="text-xl leading-none font-bold text-gray-900 dark:text-white"
-        >
-          Info
-        </h5>
-        <div class="ml-auto flex items-center">
-          <UserOutline
-            class="h-5 w-5 translate-x-[-5px] text-gray-900 dark:text-white"
-          />
-          <p class="text-gray-900 dark:text-white">
-            {data.users.length}
-          </p>
-        </div>
+<div class="flex flex-col m-2 gap-3 h-[calc(100vh-1rem)] overflow-hidden">
+  <Card class="p-4 w-full max-w-none flex flex-col min-h-0">
+    <div class="flex items-center">
+      <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">
+        Info
+      </h5>
+      <div class="ml-auto flex items-center">
+        <UserOutline
+          class="h-5 w-5 translate-x-[-5px] text-gray-900 dark:text-white"
+        />
+        <p class="text-gray-900 dark:text-white">
+          {data.users.length}
+        </p>
       </div>
+    </div>
 
-      <div>
-        <h6 class="text-md font-semibold text-gray-900 dark:text-white">
-          Owner:
-        </h6>
-        {#if data.owner}
-          <p class="text-gray-900 dark:text-white">
-            {data.owner.displayName ? data.owner.displayName : data.owner.name}
-          </p>
-        {/if}
-      </div>
+    <div>
+      <h6 class="text-md font-semibold text-gray-900 dark:text-white">
+        Owner:
+      </h6>
+      {#if data.owner}
+        <p class="text-gray-900 dark:text-white">
+          {data.owner.displayName ? data.owner.displayName : data.owner.name}
+        </p>
+      {/if}
+    </div>
 
-      <div>
-        <h6 class="text-md font-semibold text-gray-900 dark:text-white">
-          Members:
-        </h6>
+    <div class="flex flex-col min-h-0">
+      <h6 class="text-md font-semibold text-gray-900 dark:text-white">
+        Members:
+      </h6>
 
+      <div class="min-h-0 overflow-y-auto overflow-x-hidden max-h-64 pr-2">
         {#if data.users}
           <Listgroup items={data.users} class="border-0 dark:bg-transparent">
             {#snippet children(user)}
@@ -382,6 +381,11 @@
                 <div class="flex items-center py-2">
                   <p class="text-sm font-sm text-gray-900 dark:text-white">
                     {user.displayName ? user.displayName : user.name}
+                    {#if user.status}
+                      <span class="text-gray-500 dark:text-gray-400 italic">
+                        - {user.status}
+                      </span>
+                    {/if}
                   </p>
                 </div>
               {/if}
@@ -389,77 +393,74 @@
           </Listgroup>
         {/if}
       </div>
-    </Card>
+    </div>
+  </Card>
 
-    <Card class="p-4 w-full flex-1 max-w-none">
-      <div class="mb-4 flex items-center justify-between">
-        <h5
-          class="text-xl leading-none font-bold text-gray-900 dark:text-white"
-        >
-          Latest Alerts
-        </h5>
-        <Button onclick={() => (exportModal = true)}>Export</Button>
+  <Card class="p-4 w-full flex-1 max-w-none flex flex-col min-h-0">
+    <div class="mb-4 flex items-center justify-between">
+      <h5 class="text-xl leading-none font-bold text-gray-900 dark:text-white">
+        Latest Alerts
+      </h5>
+      <Button onclick={() => (exportModal = true)}>Export</Button>
 
-        <ExportAlertModal
-          bind:exportModal
-          exportPDF={exportAlertsToPDF}
-          exportJSON={exportAlertsToJSON}
-        ></ExportAlertModal>
-      </div>
+      <ExportAlertModal
+        bind:exportModal
+        exportPDF={exportAlertsToPDF}
+        exportJSON={exportAlertsToJSON}
+      ></ExportAlertModal>
+    </div>
 
+    <div class="min-h-0 flex-1 overflow-y-auto pr-2">
       <Listgroup items={alerts} class="border-0 dark:bg-transparent">
         {#snippet children(alert)}
           <div class="flex items-center space-x-4 py-2 rtl:space-x-reverse">
             <div class="min-w-0 flex-1">
-              <p
-                class="truncate text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <p class="truncate text-sm font-medium text-gray-900 dark:text-white">
                 {alert.title}
               </p>
               <p class="truncate text-sm text-gray-500 dark:text-gray-499">
                 {alert.description}
               </p>
             </div>
-            <div
-              class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
-            >
+            <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
               <SeverityBadge severity={alert.severity}></SeverityBadge>
             </div>
           </div>
         {/snippet}
       </Listgroup>
-    </Card>
+    </div>
+  </Card>
 
-    {#if !data.isMember}
-      <JoinGroupBtn></JoinGroupBtn>
-    {/if}
+  {#if !data.isMember}
+    <JoinGroupBtn></JoinGroupBtn>
+  {/if}
 
-    {#if data.isMember && !isOwner}
-      <RemoveGroupBtn></RemoveGroupBtn>
-    {/if}
+  {#if data.isMember && !isOwner}
+    <RemoveGroupBtn></RemoveGroupBtn>
+  {/if}
 
-    {#if userRole === "owner" || userRole === "admin" || userRole === "moderator"}
-      <Button onclick={() => (formModal = true)}>Send an alert</Button>
-      <SendAlertModal bind:formModal></SendAlertModal>
-    {/if}
+  {#if userRole === "owner" || userRole === "admin" || userRole === "moderator"}
+    <Button onclick={() => (formModal = true)}>Send an alert</Button>
+    <SendAlertModal bind:formModal></SendAlertModal>
+  {/if}
 
-    {#if isOwner || isAdmin}
-      <Button onclick={() => (settingsModal = true)}>Settings</Button>
-      <GroupSettings
-        bind:settingsModal
-        users={data.users}
-        owner={data.owner}
-        group={data.group}
-        {userRole}
-        currentUser={data.currentUser}
-      ></GroupSettings>
-    {/if}
+  {#if isOwner || isAdmin}
+    <Button onclick={() => (settingsModal = true)}>Settings</Button>
+    <GroupSettings
+      bind:settingsModal
+      users={data.users}
+      owner={data.owner}
+      group={data.group}
+      {userRole}
+      currentUser={data.currentUser}
+    ></GroupSettings>
+  {/if}
 
-    {#if isOwner}
-      <Button onclick={() => (deleteGroupForm = true)}>Delete group</Button>
-      <DeleteGroupBtn bind:deleteGroupForm></DeleteGroupBtn>
-    {/if}
-  </div>
+  {#if isOwner}
+    <Button onclick={() => (deleteGroupForm = true)}>Delete group</Button>
+    <DeleteGroupBtn bind:deleteGroupForm></DeleteGroupBtn>
+  {/if}
+</div>
 </div>
 
 <style>

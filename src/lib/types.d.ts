@@ -22,7 +22,8 @@ export type UserDb = {
 export type User = {
   id: string,
   name: string,
-  email: string
+  email: string,
+  status: string
 }
 
 export type AlertDb = {

@@ -10,7 +10,6 @@
   const user = data.user ?? { displayName: "", name: "", profileDescription: "", phoneNumber: "" };
 
   let currentSection = $state<"profile" | "accessibility" | "security" | "terms" | "notifications">("profile");
-  
   let fontSize = $state<'small' | 'medium' | 'large' | 'xlarge'>('medium');
   let themeBtn = $state("light");
   let highContrast = $state<boolean>(false);
@@ -219,10 +218,23 @@
   </Sidebar>
 </div>
   
-  <div class="px-4 md:ml-64">
+<div class="px-4 md:ml-64">
     <div class="rounded-lg border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">
-      
       {#if currentSection === "profile"}
+      <div class="flex flex-col mt-6">
+        <Label class="mb-2">Profile Picture</Label>
+        {#if user.profilePicture}
+            <img src={user.profilePicture} alt="Profile" class="w-20 h-20 rounded-full object-cover mb-3" />
+        {:else}
+            <div class="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center mb-3">
+                <span class="text-gray-400 text-2xl">👤</span>
+            </div>
+        {/if}
+        <form method="POST" action="?/updateProfilePicture" enctype="multipart/form-data">
+            <input type="file" name="profile_picture" accept="image/*" class="text-sm text-gray-400 mb-2" />
+            <Button type="submit" size="sm">Upload Photo</Button>
+        </form>
+      </div>
       <form method="POST" action="?/updateProfile">
         <div class="mb-6 grid gap-4">
           <div class="flex flex-col">
@@ -236,6 +248,14 @@
           <div class="flex flex-col">
             <Label for="phone_number" class="mb-2">Phone Number</Label>
             <PhoneInput name="phone_number" defaultValue={user.phoneNumber} phoneIcon={false} placeholder="123-456-7890"/>
+          </div>
+          <div class="flex flex-col">
+              <Label class="mb-2">Emergency Contact Name</Label>
+              <Input type="text" name="emergency_contact_name" value={user.emergencyContactName ?? ""} placeholder="Full name" />
+          </div>
+          <div class="flex flex-col">
+              <Label class="mb-2">Emergency Contact Phone</Label>
+              <PhoneInput name="emergency_contact_phone" defaultValue={user.emergencyContactPhone ?? ""} phoneIcon={false} placeholder="123-456-7890" />
           </div>
         </div>
         <Button type="submit">Save Changes</Button>
@@ -365,6 +385,18 @@
         <div class="mb-6 grid gap-4">
           <Button type="submit">Delete Account</Button>
         </div>
+        <hr class="my-6 border-gray-700" />
+        <h2 class="text-xl font-semibold mb-2">Login Activity</h2>
+        <p class="text-sm text-gray-400 mb-4">Your last 5 logins.</p>
+        <div class="flex flex-col gap-3">
+            {#each data.loginActivity as session}
+                <div class="rounded-lg p-3" style="background-color: #2a2a2a;">
+                    <p class="text-sm text-white">{new Date(session.createdAt).toLocaleString()}</p>
+                    <p class="text-xs text-gray-400 mt-1">IP: {session.ipAddress}</p>
+                    <p class="text-xs text-gray-500 mt-1 truncate">{session.userAgent}</p>
+                </div>
+            {/each}
+        </div>
       </form>
 
       {/if}
@@ -436,3 +468,13 @@
     </div>
   </div>
 </div>
+
+<style>
+  input[type="range"] {
+    accent-color: #dc2626 !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+</style>

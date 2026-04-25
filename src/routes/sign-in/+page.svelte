@@ -6,20 +6,19 @@
 	const signinEmail = writable("");
 	const signinPassword = writable("");
     const handleSignIn = async () => {
-	await signIn.email(
-		{
-			email: $signinEmail,
-			password: $signinPassword,
-			callbackURL: "/dashboard",
-		},
-		{
-			onError(context) {
-				alert(context.error.message);
+		await signIn.email(
+			{
+				email: $signinEmail,
+				password: $signinPassword,
+				callbackURL: "/dashboard",
 			},
-		},
-	);
-
-};    
+			{
+				onError(context) {
+					alert(context.error.message);
+				},
+			},
+		);
+	};    
 </script>
 <div class="min-h-screen flex justify-center items-center">
 	<Card size="md" class="p-4 sm:p-6 md:p-8">

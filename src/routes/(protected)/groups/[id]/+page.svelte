@@ -66,9 +66,9 @@
     }
 </script>
 
-<div class="grid h-full grid-cols-[75%_1fr] grid-rows-1 gap-2">
+<div class="grid h-full grid-cols-1 md:grid-cols-[75%_1fr] gap-2">
     <!-- Main Body -->
-    <div>
+    <div class="p-4">
         {#if data.group}
             <h1 class="text-2xl">{data.group.title}</h1>
             <h2 class="text-2md">{data.group.description}</h2>

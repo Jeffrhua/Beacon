@@ -97,7 +97,8 @@
 </script>
 
 <div class="p-5 flex flex-row h-full">
-    <div class="conversations flex-none">
+    <!-- conversation list - hidden on mobile when chat is open -->
+    <div class="conversations flex-none {selectedChat ? 'hidden md:block' : 'w-full md:w-auto'}">
         <div class="pb-5">
             <Button onclick={() => (groupChatForm = true)} size="xs">
                 <PenSolid class="shrink-0 h-6 w-6" /> New Message
@@ -117,27 +118,36 @@
         </Card>
     </div>
 
-    <div class="conversation flex-1 px-2">
-    {#if selectedChat}
-        <div class="flex h-full flex-col">
-            <h2 class="text-lg font-semibold mb-4">
-                {selectedChat.userDetails.map((u) => u.name).join(", ")}
-            </h2>
-            <div class="border-t border-gray-500 my-2"></div>
-            <div class="flex-1 overflow-y-auto">
-                {#each filteredMessages as message}
-                    <div class="rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-2">
-                        {`${userMap[message.sender_id]}: ${message.content}`}
-                    </div>
-                {/each}
+    <!-- chat area - full width on mobile -->
+    <div class="conversation flex-1 px-2 {selectedChat ? 'block' : 'hidden md:block'}">
+        {#if selectedChat}
+            <div class="flex h-full flex-col">
+                <!-- back button on mobile -->
+                <button 
+                    class="md:hidden mb-2 text-sm flex items-center gap-1"
+                    style="background: none !important; border: none !important; box-shadow: none !important; transform: none !important; color: #e84040 !important; padding: 0 !important; text-transform: none !important;"
+                    onclick={() => selectedChat = null}
+                >
+                    ← Back
+                </button>
+                <h2 class="text-lg font-semibold mb-4">
+                    {selectedChat.userDetails.map((u) => u.name).join(", ")}
+                </h2>
+                <div class="border-t border-gray-500 my-2"></div>
+                <div class="flex-1 overflow-y-auto">
+                    {#each filteredMessages as message}
+                        <div class="rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-2 mb-2">
+                            {`${userMap[message.sender_id]}: ${message.content}`}
+                        </div>
+                    {/each}
+                </div>
+                <div class="pt-2">
+                    <Textarea bind:value={newMessage} placeholder={"Send a message..."} onkeydown={handleKeydown} class="w-full resize-none"/>
+                </div>
             </div>
-            <div class="pt-2">
-                <Textarea bind:value={newMessage} placeholder={"Send a message..."} onkeydown={handleKeydown} class="w-full resize-none"/>
-            </div>
-        </div>
-    {:else}
-        <p> Create / select a new conversation </p>
-    {/if}
+        {:else}
+            <p class="hidden md:block">Create / select a new conversation</p>
+        {/if}
     </div>
 </div>
 

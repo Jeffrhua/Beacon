@@ -747,3 +747,18 @@ export async function updateUserStatus(userId: ObjectId, newStatus: string) {
     { $set: { status: newStatus} }
   );
 }
+
+export async function markAlertsAsSeen(userId: ObjectId, alertIds: ObjectId[]) {
+  const db = await ensureDb();
+  await db.collection('seen_alerts').updateOne(
+    { user_id: userId },
+    { $addToSet: { seen_ids: { $each: alertIds } } },
+    { upsert: true }
+  );
+}
+
+export async function getSeenAlertIds(userId: ObjectId): Promise<string[]> {
+  const db = await ensureDb();
+  const record = await db.collection('seen_alerts').findOne({ user_id: userId });
+  return (record?.seen_ids ?? []).map((id: ObjectId) => id.toString());
+}

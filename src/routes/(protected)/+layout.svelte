@@ -63,7 +63,7 @@
 
 <div class="{$theme} app h-screen grid grid-rows-[64px_1fr_64px] md:grid-rows-[64px_1fr] bg-[#FFFFFF] {sidebarOpen ? "md:grid-cols-[240px_1fr]" : "md:grid-cols-1"}">
     <header class="{sidebarOpen ? "col-span-2" : "col-span-1"} z-50">
-        <Navbar toggleSidebar={toggleSidebar} notifications={notifications} title="Dashboard"></Navbar>
+        <Navbar toggleSidebar={toggleSidebar} notifications={notifications} seenIds={data.seenIds} title="Dashboard" />
     </header>
     {#if sidebarOpen}
         <aside class="hidden md:block overflow-y-auto z-50">

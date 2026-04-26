@@ -4,8 +4,35 @@
     import { Button, Dropdown, DropdownItem, ListgroupItem } from "flowbite-svelte";
     import { Card, Listgroup, Avatar } from "flowbite-svelte";
     import SeverityBadge from "$lib/components/SeverityBadge.svelte";
-    let {toggleSidebar, title, notifications = []} = $props();
+
+    let { toggleSidebar, title, notifications = [], seenIds = [] } = $props();
     let activeUrl = $derived(page.url.pathname);
+
+    // Which alerts are unread
+   let seenSet = $derived(new Set<string>(seenIds));
+    let unreadCount = $derived(
+        notifications.filter((n: any) => !seenSet.has(n.alertId)).length
+    );
+
+    async function onBellClick() {
+        // Get IDs of all currently unread alerts
+        const unreadIds = notifications
+            .filter((n: any) => !seenSet.has(n.alertId))
+            .map((n: any) => n.alertId)
+            .filter(Boolean);
+
+        if (unreadIds.length === 0) return;
+
+        // Save to MongoDB
+        await fetch('/alerts/seen', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ alertIds: unreadIds })
+        });
+
+        // Update locally so badge disappears instantly
+        seenSet = new Set([...seenSet, ...unreadIds]);
+    }
 </script>
 
 <div class="w-full h-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-[#23272F]">
@@ -18,9 +45,15 @@
             {title}
         </h1>
     </div>
-    <!-- Notification Button on the top right that shows recent alerts -->
     <div class="px-10">
-        <Button outline color="dark"><BellSolid class="shrink-0 h-7 w-7 cursor-pointer dark:text-white"/></Button>
+        <Button outline color="dark" class="relative" onclick={onBellClick}>
+            <BellSolid class="shrink-0 h-7 w-7 cursor-pointer dark:text-white"/>
+            {#if unreadCount > 0}
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+            {/if}
+        </Button>
         <Dropdown activeUrl={activeUrl}>
             <Listgroup items={notifications} class="border-0 w-[300px] h-[500px] overflow-y-auto">
                 {#snippet children(item)}
@@ -37,7 +70,6 @@
                                     {item.alertCreated}
                                 </p>
                             </div>
-
                             <div class="ml-auto shrink-0 text-base font-semibold text-gray-900 dark:text-white">
                                 <SeverityBadge severity={item?.alertSeverity}></SeverityBadge>
                             </div>

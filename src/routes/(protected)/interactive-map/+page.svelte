@@ -144,12 +144,10 @@
 
             <!-- GROUP SELECTOR -->
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">Report to Group:</label>
-                <select
-                    name="groupId"
-                    bind:value={incidentForm.groupId}
-                    style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                >
+                <label for="groupId" style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">
+                    Report to Group:
+                </label>
+                <select id="groupId" name="groupId" bind:value={incidentForm.groupId}>
                     <option value="">Select a group...</option>
                     {#each data.groups as group}
                         <option value={group.id}>{group.title}</option>
@@ -159,9 +157,9 @@
 
             <!-- SEVERITY SELECTOR -->
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #111;">
+                <div style="display: block; margin-bottom: 8px; font-weight: bold; color: #111;">
                     Severity: <span style="font-weight: normal; color: #555;">({incidentForm.severity})</span>
-                </label>
+                </div>
                 <div style="display: flex; gap: 10px;">
                     {#each severityLevels as s}
                         <button
@@ -188,39 +186,26 @@
 
             <!-- ADDRESS -->
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">Address:</label>
-                <input
-                    type="text"
-                    name="address"
-                    bind:value={incidentForm.address}
-                    style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                />
+                <label for="address" style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">
+                    Address:
+                </label>
+                <input id="address" type="text" name="address" bind:value={incidentForm.address} />
             </div>
 
             <!-- DESCRIPTION -->
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">What happened?</label>
-                <textarea
-                    name="description"
-                    bind:value={incidentForm.description}
-                    placeholder="e.g., Car crash, Robbery, Fire, etc."
-                    rows="3"
-                    style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                    required
-                ></textarea>
+                <label for="description" style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">
+                    What happened?
+                </label>
+                <textarea id="description" name="description" bind:value={incidentForm.description}></textarea>
             </div>
 
             <!-- PHOTO UPLOAD -->
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">
-                    Photo (optional):
-                </label>
-                <input
-                    type="file"
-                    accept="image/*"
-                    bind:files={photoFiles}
-                    style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9;"
-                />
+                    <label for="photo" style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">
+                        Photo (optional):
+                    </label>
+                    <input id="photo" type="file" accept="image/*" bind:files={photoFiles} />
                 {#if photoFiles && photoFiles[0]}
                     <img
                         src={URL.createObjectURL(photoFiles[0])}

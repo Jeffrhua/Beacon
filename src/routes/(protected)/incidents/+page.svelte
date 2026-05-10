@@ -114,8 +114,9 @@
     <div class="flex gap-4 mb-4 flex-wrap">
 
         <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-400">Status</label>
+            <label for="status-filter" class="text-sm text-gray-400">Status</label>
             <select
+                id="status-filter"
                 bind:value={filterStatus}
                 class="border border-gray-600 rounded px-3 py-2 text-sm text-white appearance-none w-44"
                 style="background-color: #1f2937; padding-right: 2rem;"
@@ -127,8 +128,9 @@
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-400">Date Range</label>
+            <label for="date-filter" class="text-sm text-gray-400">Date Range</label>
             <select
+                id="date-filter"
                 bind:value={filterDate}
                 class="border border-gray-600 rounded px-3 py-2 text-sm text-white appearance-none w-44"
                 style="background-color: #1f2937; padding-right: 2rem;"
@@ -140,8 +142,9 @@
         </div>
 
         <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-400">Severity</label>
+            <label for="severity-filter" class="text-sm text-gray-400">Severity</label>
             <select
+                id="severity-filter"
                 bind:value={filterSeverity}
                 class="border border-gray-600 rounded px-3 py-2 text-sm text-white appearance-none w-44"
                 style="background-color: #1f2937; padding-right: 2rem;"
@@ -398,30 +401,29 @@
 
 <!-- PHOTO MODAL -->
 {#if modalPhoto}
-    <div
+    <button
+        type="button"
         onclick={() => modalPhoto = null}
+        aria-label="Close photo modal"
         style="
             position: fixed; inset: 0; z-index: 9999;
             background: rgba(0,0,0,0.85);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
+            cursor: pointer; border: none; padding: 0;
         "
     >
         <img
             src={modalPhoto}
             alt="Incident full view"
             style="max-width: 90vw; max-height: 90vh; border-radius: 8px; object-fit: contain;"
-            onclick={(e) => e.stopPropagation()}
         />
-        <button
-            onclick={() => modalPhoto = null}
+
+        <span
+            aria-hidden="true"
             style="
                 position: absolute; top: 20px; right: 28px;
-                background: none; border: none;
                 color: white; font-size: 2rem; cursor: pointer;
             "
-        >✕</button>
-    </div>
+        >✕</span>
+    </button>
 {/if}
-
-

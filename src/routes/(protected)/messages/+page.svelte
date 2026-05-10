@@ -3,12 +3,12 @@
     import { Button, Card, Textarea } from "flowbite-svelte";
     import { onMount } from "svelte";
     import type { GroupChat, Message } from "$lib/types.js";
-    import CreateConversationForm from "$lib/components/CreateConversationForm.svelte"
+    import CreateConversationForm from "$lib/components/CreateConversationForm.svelte";
 
     let { data } = $props();
     let groupChatForm = $state(false);
-    let groupChats: GroupChat[] = data.groupChats ? data.groupChats : [];
-    let friends = data.friends || []
+    let groupChats = $state<GroupChat[]>(data.groupChats ?? []);
+    let friends = $state(data.friends ?? []);
     let socket: WebSocket;
 
 	let messages = $state<Message[]>([]);

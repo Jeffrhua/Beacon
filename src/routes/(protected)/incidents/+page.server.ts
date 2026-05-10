@@ -1,21 +1,15 @@
-import { ObjectId } from "mongodb";
+import { Db, ObjectId } from "mongodb";
 import { client } from "$lib/server/auth";
 import { getUserGroups } from "$lib/server/mongodb";
 import { redirect } from "@sveltejs/kit";
 
 
 export const load = async ({ locals }) => {
-    if (!locals.user) throw redirect(303, '/sign-in');
-
-
     const userId   = new ObjectId(locals.user.id);
-    const db       = client.db('test');
-    const beaconDb = client.db('Beacon');
+    const db       = client.db('main');
 
-
-    const fullUser = await beaconDb.collection('user').findOne({ _id: userId });
+    const fullUser = await db.collection('user').findOne({ _id: userId });
     const email    = fullUser?.email;
-
 
     const groups        = await getUserGroups(userId);
     const groupIds      = groups.map(g => g._id.toString());
@@ -76,7 +70,7 @@ export const actions = {
         if (!id || !status) return { success: false };
 
 
-        const db       = client.db('test');
+        const db       = client.db('main');
         const incident = await db.collection('incidents').findOne({ _id: new ObjectId(id) });
         if (!incident) return { success: false };
 

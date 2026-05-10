@@ -5,7 +5,7 @@ import { MONGODB_URI } from '$env/static/private';
 import { getUserGroups } from '$lib/server/mongodb';
 
 const client = new MongoClient(MONGODB_URI);
-const db = client.db('test');
+const db = client.db('main');
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user) throw redirect(303, '/sign-in');

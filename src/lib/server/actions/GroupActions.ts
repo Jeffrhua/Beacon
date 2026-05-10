@@ -50,7 +50,7 @@ export const GroupActions = {
 
         const newAlertId = alertRes.insertedId;
 
-        const alertGropuRes = await db.collection('alert_group').insertOne({
+        const alertGroupRes = await db.collection('alert_group').insertOne({
             group_id: new ObjectId(groupId),
             alert_id: new ObjectId(newAlertId),
         })

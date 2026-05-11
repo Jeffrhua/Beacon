@@ -14,6 +14,7 @@
 		</div>
 		<div class="row-span-2 row-start-2">
 			<div class="flex justify-end">
+				<Button onclick={()=>{}} href="/groups/group-discovery">Look For Groups</Button>
 				<Button onclick={() => (formModal = true)}>Create Group</Button>
 				<CreateGroupModal bind:formModal> </CreateGroupModal>
 			</div>

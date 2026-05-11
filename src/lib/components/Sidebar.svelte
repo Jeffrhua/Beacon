@@ -1,6 +1,6 @@
 <script lang="ts">
     import { sidebar, Sidebar, SidebarGroup, SidebarItem, SidebarButton, uiHelpers  } from 'flowbite-svelte';
-	import { UsersGroupSolid, HomeSolid, BellSolid, CogSolid, MapPinSolid, GlobeSolid, TruckOutline, MessagesSolid, UsersSolid, ShareNodesSolid } from 'flowbite-svelte-icons';
+	import { UsersGroupSolid, HomeSolid, BellSolid, CogSolid, MapPinSolid, GlobeSolid, TruckOutline, MessagesSolid, UsersSolid, ShareNodesSolid, SunSolid } from 'flowbite-svelte-icons';
 	import { page } from "$app/state";
 	let activeUrl = $state(page.url.pathname);
 	const spanClass = "flex-1 ms-3 whitespace-nowrap";
@@ -42,7 +42,7 @@
 					<GlobeSolid class="shrink-0 h-6 w-6" />
 				{/snippet}
 			</SidebarItem>
-			<SidebarItem label="Groups" href="/groups">
+			<SidebarItem label="Groups" href="/groups/my-groups">
 				{#snippet icon()}
 					<UsersGroupSolid class="shrink-0 h-6 w-6" />
 				{/snippet}
@@ -62,11 +62,17 @@
 					<ShareNodesSolid class="shrink-0 h-6 w-6" />
 				{/snippet}
 			</SidebarItem>
+			<SidebarItem label="Weather" href="/weather">
+				{#snippet icon()}
+					<SunSolid class="shrink-0 h-6 w-6" />
+				{/snippet}
+			</SidebarItem>
 			<SidebarItem label="Settings" href="/settings">
 				{#snippet icon()}
 					<CogSolid class="shrink-0 h-6 w-6" />
 				{/snippet}
 			</SidebarItem>
+
 
 		</SidebarGroup>
 	</Sidebar>

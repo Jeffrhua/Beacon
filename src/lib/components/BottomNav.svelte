@@ -34,7 +34,7 @@
         <BottomNavItem btnName="Alerts" href="/alerts">
             <BellSolid class="group-hover:text-primary-600 mb-1 h-6 w-6 text-gray-500 dark:text-gray-400" />
         </BottomNavItem>
-        <BottomNavItem btnName="Groups" href="/groups">
+        <BottomNavItem btnName="Groups" href="/groups/my-groups">
             <UsersGroupSolid class="group-hover:text-primary-600 mb-1 h-6 w-6 text-gray-500 dark:text-gray-400" />
         </BottomNavItem>
         <BottomNavItem btnName="Map" href="/interactive-map">

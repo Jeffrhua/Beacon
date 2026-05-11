@@ -372,20 +372,20 @@
                 placeholder="123-456-7890"
               />
             </div>
-<div class="flex flex-col">
-  <Label for="status" class="mb-2">Status</Label>
-  <Textarea
-    name="status"
-    rows={3}
-    maxlength={50}
-    placeholder="What do you want people to know?"
-    class="w-full"
-    bind:value={statusText}
-  />
-  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-    {statusText.length}/50
-  </p>
-</div>
+            <div class="flex flex-col">
+              <Label for="status" class="mb-2">Status</Label>
+              <Textarea
+                name="status"
+                rows={3}
+                maxlength={50}
+                placeholder="What do you want people to know?"
+                class="w-full"
+                bind:value={statusText}
+              />
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {statusText.length}/50
+              </p>
+            </div>
           </div>
           <Button type="submit">Save Changes</Button>
         </form>
